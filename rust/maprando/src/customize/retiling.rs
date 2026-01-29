@@ -29,7 +29,7 @@ fn apply_toilet(rom: &mut Rom, orig_rom: &Rom, theme_name: &str) -> Result<()> {
     // Note that the way this currently works  relies on the vanilla ROM free space
     // having been replaced from 0xFF bytes to 0x00.
     let room_ptr = rom.read_u16(toilet_intersecting_room_ptr_addr)? + 0x70000;
-    let patch_filename = if room_ptr == 0x70000 {
+    let patch_filename = if room_ptr == 0x7FFFF {
         // Unspecified room means this is vanilla map, so leave the Toilet alone.
         format!("{theme_name}-VanillaMapTransit.bps")
     } else {
