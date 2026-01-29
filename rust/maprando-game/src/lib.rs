@@ -3349,24 +3349,19 @@ impl GameData {
 
     fn override_bowling_alley(&mut self, room_json: &mut JsonValue) {
         // Add flag on Bowling Statue node
-        let mut found = false;
-        for node_json in room_json["nodes"].members_mut() {
-            if node_json["id"].as_i32().unwrap() == 6 {
-                found = true;
-                node_json["yields"] = json::array!["f_UsedBowlingStatue"];
-                node_json["locks"] = json::array![{
-                    "name": "Use Statue",
-                    "lockType": "gameFlag",
-                    "unlockStrats": [{
-                        "name": "Base",
-                        "notable": false,
-                        "requires": [],
-                        "flashSuitChecked": true,
-                    }],
-                }];
+        for x in room_json["strats"].members_mut() {
+            let from_id = x["link"][0].as_i32().unwrap();
+            let to_id = x["link"][1].as_i32().unwrap();
+            let strat_name = x["name"].as_str().unwrap();
+            // TODO: This is not very robust.
+            // It would be more ideal if a flag or other marker could be added on the sm-json-data side.
+            let is_bowling = ([(2, 3), (6, 3)].contains(&(from_id, to_id)) || to_id == 7)
+                && strat_name.contains("Bowling");
+            if is_bowling {
+                x.insert("setsFlags", json::array!["f_UsedBowlingStatue"])
+                    .unwrap();
             }
         }
-        assert!(found);
     }
 
     fn override_metroid_room_1(&mut self, room_json: &mut JsonValue) {
