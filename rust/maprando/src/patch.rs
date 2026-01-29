@@ -3333,9 +3333,11 @@ fn fix_snes_checksum(rom: &mut Rom) {
     data[CHECKSUM_ADDR + 2..CHECKSUM_ADDR + 4].copy_from_slice(&checksum.to_le_bytes());
 }
 
+#[allow(dead_code)]
 fn clear_free_space(rom: &mut Rom) -> Result<()> {
     // Clear free space areas to 0x00, for faster checksum computation (self_check.asm).
     // This ends up only saving like 14 frames in the checksum, so it's not really important.
+    // It's disabled for now because it causes issues with SpriteSomething and possibly other patches.
     let free_space_areas = vec![
         (snes2pc(0x80CD8E), snes2pc(0x80FFC0)),
         (snes2pc(0x81EF1A), snes2pc(0x828000)),
@@ -3409,7 +3411,7 @@ pub fn make_rom(
     mosaic_themes: &[MosaicTheme],
 ) -> Result<Rom> {
     let mut orig_rom = base_rom.clone();
-    clear_free_space(&mut orig_rom)?;
+    // clear_free_space(&mut orig_rom)?;
     apply_orig_ips_patches(&mut orig_rom, randomizer_settings)?;
 
     // Remove solid wall that spawns in Tourian Escape Room 1 while coming through right door.
