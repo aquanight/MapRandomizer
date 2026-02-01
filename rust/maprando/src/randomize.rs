@@ -127,8 +127,11 @@ impl DifficultyConfig {
         }
 
         let mut numerics: Vec<Capacity> = vec![-1; game_data.numeric_isv.keys.len()];
-        let numeric_overrides: Vec<(&'static str, i32)> =
-            vec![("n_speedKeepLenience", skill.spike_speed_keep_leniency)];
+        let numeric_overrides: Vec<(&'static str, i32)> = vec![
+            ("n_speedKeepLenience", skill.spike_speed_keep_leniency),
+            ("n_spikeXModeLenience", skill.spike_xmode_leniency),
+            ("n_spikeSuitLenience", skill.spike_suit_leniency),
+        ];
         for (name, value) in numeric_overrides {
             if let Some(&idx) = game_data.numeric_isv.index_by_key.get(name) {
                 numerics[idx] = value as Capacity;

@@ -34393,6 +34393,14 @@
   },
   {
     "room_id": 144,
+    "strat_id": 79,
+    "video_id": 9762,
+    "created_user": "nn",
+    "note": "",
+    "dev_note": "FIXME: update logic notes."
+  },
+  {
+    "room_id": 144,
     "strat_id": 80,
     "video_id": 3845,
     "created_user": "Nito",
@@ -44420,15 +44428,23 @@
     "strat_id": 34,
     "video_id": 49,
     "created_user": "maddo",
-    "note": "",
+    "note": "Stutter spin break",
+    "dev_note": "FIXME: This is shown as first video in order to match the logic description, but the angle spin break method is probably better."
+  },
+  {
+    "room_id": 174,
+    "strat_id": 34,
+    "video_id": 9765,
+    "created_user": "maddo",
+    "note": "Angle spin break (press angle then hold forward exactly 1 frame later)",
     "dev_note": ""
   },
   {
     "room_id": 174,
     "strat_id": 34,
-    "video_id": 218,
-    "created_user": "Osse101",
-    "note": "",
+    "video_id": 9758,
+    "created_user": "nn",
+    "note": "Single-frame shot spin break",
     "dev_note": ""
   },
   {

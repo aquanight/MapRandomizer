@@ -1086,6 +1086,12 @@
         "video_id": null
     },
     {
+        "tech_id": 160,
+        "name": "canSuperJump",
+        "difficulty": "Ignored",
+        "video_id": null
+    },
+    {
         "tech_id": 224,
         "name": "canDoubleXModeBlueSuit",
         "difficulty": "Ignored",
@@ -1218,10 +1224,10 @@
         "video_id": 1002
     },
     {
-        "tech_id": 160,
-        "name": "canSuperJump",
-        "difficulty": "Ignored",
-        "video_id": null
+        "tech_id": 243,
+        "name": "canXModeMovement",
+        "difficulty": "Extreme",
+        "video_id": 2678
     },
     {
         "tech_id": 225,

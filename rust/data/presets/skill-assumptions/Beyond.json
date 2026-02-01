@@ -863,6 +863,11 @@
             "enabled": true
         },
         {
+            "id": 243,
+            "name": "canXModeMovement",
+            "enabled": true
+        },
+        {
             "id": 228,
             "name": "canRModeStandupClip",
             "enabled": true

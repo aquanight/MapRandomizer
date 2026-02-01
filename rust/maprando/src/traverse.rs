@@ -1485,57 +1485,6 @@ fn apply_requirement_simple(
                 cx.reverse,
             )
             .into(),
-        Requirement::SpikeSuitSpikeHitLeniency => {
-            let energy_used = cx.settings.skill_assumption_settings.spike_suit_leniency as Capacity
-                * 60
-                / suit_damage_factor(&cx.global.inventory);
-            local
-                .use_energy(energy_used, true, &cx.global.inventory, cx.reverse)
-                .into()
-        }
-        Requirement::SpikeSuitThornHitLeniency | Requirement::SpikeSuitSamusEaterLeniency => {
-            let energy_used = cx.settings.skill_assumption_settings.spike_suit_leniency as Capacity
-                * 16
-                / suit_damage_factor(&cx.global.inventory);
-            local
-                .use_energy(energy_used, true, &cx.global.inventory, cx.reverse)
-                .into()
-        }
-        Requirement::SpikeSuitPowerBombLeniency => {
-            let pbs_used = cx.settings.skill_assumption_settings.spike_suit_leniency as Capacity;
-            local
-                .use_power_bombs(pbs_used, &cx.global.inventory, cx.reverse)
-                .into()
-        }
-        Requirement::XModeSpikeHitLeniency {} => {
-            let energy_used =
-                cx.difficulty.spike_xmode_leniency * 60 / suit_damage_factor(&cx.global.inventory);
-            local
-                .use_energy(energy_used, true, &cx.global.inventory, cx.reverse)
-                .into()
-        }
-        Requirement::XModeThornHitLeniency {} => {
-            let energy_used =
-                cx.difficulty.spike_xmode_leniency * 16 / suit_damage_factor(&cx.global.inventory);
-            local
-                .use_energy(energy_used, true, &cx.global.inventory, cx.reverse)
-                .into()
-        }
-        Requirement::FramePerfectXModeThornHitLeniency => {
-            let energy_used = cx.difficulty.spike_speed_keep_leniency * 16
-                / suit_damage_factor(&cx.global.inventory);
-            local
-                .use_energy(energy_used, true, &cx.global.inventory, cx.reverse)
-                .into()
-        }
-        Requirement::FramePerfectDoubleXModeThornHitLeniency => {
-            let leniency = cx.difficulty.spike_speed_keep_leniency;
-            let hits = (leniency + 1) * (leniency + 1) - 1;
-            let energy_used = hits * 16 / suit_damage_factor(&cx.global.inventory);
-            local
-                .use_energy(energy_used, true, &cx.global.inventory, cx.reverse)
-                .into()
-        }
         Requirement::MissilesAvailable(count) => {
             let count = count.resolve(&cx.difficulty.numerics);
             local

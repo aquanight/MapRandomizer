@@ -352,14 +352,6 @@ pub enum Requirement {
     HeatedDoorStuckLeniency {
         heat_frames: Capacity,
     },
-    SpikeSuitSpikeHitLeniency,
-    SpikeSuitThornHitLeniency,
-    SpikeSuitSamusEaterLeniency,
-    SpikeSuitPowerBombLeniency,
-    XModeSpikeHitLeniency {},
-    XModeThornHitLeniency {},
-    FramePerfectXModeThornHitLeniency,
-    FramePerfectDoubleXModeThornHitLeniency,
     ElevatorCFLeniency,
     BombIntoCrystalFlashClipLeniency {},
     JumpIntoCrystalFlashClipLeniency {},
@@ -2375,22 +2367,6 @@ impl GameData {
                 return Ok(Requirement::BombIntoCrystalFlashClipLeniency {});
             } else if value == "i_jumpIntoCrystalFlashClipLeniency" {
                 return Ok(Requirement::JumpIntoCrystalFlashClipLeniency {});
-            } else if value == "i_spikeSuitSpikeHitLeniency" {
-                return Ok(Requirement::SpikeSuitSpikeHitLeniency {});
-            } else if value == "i_spikeSuitThornHitLeniency" {
-                return Ok(Requirement::SpikeSuitThornHitLeniency {});
-            } else if value == "i_spikeSuitSamusEaterLeniency" {
-                return Ok(Requirement::SpikeSuitSamusEaterLeniency {});
-            } else if value == "i_spikeSuitPowerBombLeniency" {
-                return Ok(Requirement::SpikeSuitPowerBombLeniency {});
-            } else if value == "i_XModeSpikeHitLeniency" {
-                return Ok(Requirement::XModeSpikeHitLeniency {});
-            } else if value == "i_XModeThornHitLeniency" {
-                return Ok(Requirement::XModeThornHitLeniency {});
-            } else if value == "i_FramePerfectXModeThornHitLeniency" {
-                return Ok(Requirement::FramePerfectXModeThornHitLeniency);
-            } else if value == "i_FramePerfectDoubleXModeThornHitLeniency" {
-                return Ok(Requirement::FramePerfectDoubleXModeThornHitLeniency {});
             } else if value == "i_MotherBrainBarrier1Clear" {
                 return Ok(Requirement::MotherBrainBarrierClear(0));
             } else if value == "i_MotherBrainBarrier2Clear" {
