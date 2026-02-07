@@ -146,6 +146,7 @@ fn get_settings(scenario: &Scenario) -> Result<RandomizerSettings> {
             resource_multiplier: settings.resource_multiplier.unwrap_or(1.0),
             farm_time_limit: settings.farm_time_limit.unwrap_or(0.0),
             flash_suit_distance: 255,
+            blue_suit_distance: 255,
             gate_glitch_leniency: 0,
             door_stuck_leniency: 0,
             bomb_into_cf_leniency: 0,

@@ -217,6 +217,7 @@ let localStateKeyOrder = [
 	"farm_baseline_supers",
 	"farm_baseline_power_bombs",
 	"flash_suit",
+	"blue_suit",
 	"length",
 ];
 
@@ -310,7 +311,7 @@ function updateDebugData() {
 	}
 	let costMetric = parseInt(document.getElementById("debugCostMetric").value);
 	let historyIndex = parseInt(document.getElementById("debugHistoryIndex").value);
-	if (costMetric < 0 || costMetric > 2) {
+	if (costMetric < 0 || costMetric > 3) {
 		return;
 	}
 
@@ -1005,6 +1006,9 @@ fetch(`../spoiler.json`).then(c => c.json()).then(c => {
 		}
 		if (k.flash_suit !== undefined) {
 			out += `Flash suit: ${k.flash_suit}<br>`;
+		}
+		if (k.blue_suit !== undefined) {
+			out += `Blue suit: ${k.blue_suit}<br>`;
 		}
 		return out;
 	}

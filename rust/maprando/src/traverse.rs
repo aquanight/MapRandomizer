@@ -103,7 +103,7 @@ fn apply_enemy_kill_requirement(
 #[derive(Clone)]
 pub struct CostConfig {}
 
-pub const NUM_COST_METRICS: usize = 3;
+pub const NUM_COST_METRICS: usize = 4;
 type CostValue = i32;
 
 fn compute_cost(
@@ -139,6 +139,7 @@ fn compute_cost(
     } else {
         local.shinecharge_frames_remaining as CostValue
     };
+    let mut blue_suit_cost = -(local.blue_suit as CostValue);
     if reverse {
         energy_cost = -energy_cost;
         reserve_cost = -reserve_cost;
@@ -146,6 +147,7 @@ fn compute_cost(
         supers_cost = -supers_cost;
         power_bombs_cost = -power_bombs_cost;
         shinecharge_cost = -shinecharge_cost;
+        blue_suit_cost = -blue_suit_cost;
     }
     let cycle_frames_cost = local.cycle_frames as CostValue;
     let total_energy_cost = energy_cost + reserve_cost;
@@ -155,15 +157,28 @@ fn compute_cost(
         + 100 * reserve_cost
         + total_ammo_cost
         + shinecharge_cost
+        + blue_suit_cost
         + cycle_frames_cost;
-    let ammo_sensitive_cost_metric =
-        total_energy_cost + 100000 * total_ammo_cost + shinecharge_cost + cycle_frames_cost;
-    let shinecharge_sensitive_cost_metric =
-        total_energy_cost + total_ammo_cost + 100000 * shinecharge_cost + cycle_frames_cost;
+    let ammo_sensitive_cost_metric = total_energy_cost
+        + 100000 * total_ammo_cost
+        + shinecharge_cost
+        + blue_suit_cost
+        + cycle_frames_cost;
+    let shinecharge_sensitive_cost_metric = total_energy_cost
+        + total_ammo_cost
+        + 100000 * shinecharge_cost
+        + blue_suit_cost
+        + cycle_frames_cost;
+    let blue_suit_sensitive_cost_metric = total_energy_cost
+        + total_ammo_cost
+        + shinecharge_cost
+        + 100000 * blue_suit_cost
+        + cycle_frames_cost;
     [
         energy_sensitive_cost_metric,
         ammo_sensitive_cost_metric,
         shinecharge_sensitive_cost_metric,
+        blue_suit_sensitive_cost_metric,
     ]
 }
 
@@ -1916,13 +1931,14 @@ fn apply_requirement_simple(
             if cx.global.inventory.items[Item::SpeedBooster as usize] && used_tiles >= tiles_limit {
                 if cx.reverse {
                     local.shinecharge_frames_remaining = 0;
-                    if local.flash_suit > 0 {
+                    if local.flash_suit > 0 || local.blue_suit > 0 {
                         return SimpleResult::Failure;
                     }
                 } else {
                     local.shinecharge_frames_remaining =
                         180 - cx.difficulty.shinecharge_leniency_frames;
                     local.flash_suit = 0;
+                    local.blue_suit = 0;
                 }
                 SimpleResult::Success
             } else {
@@ -2016,15 +2032,16 @@ fn apply_requirement_simple(
             }
         }
         Requirement::DoorTransition => {
-            if cx.settings.skill_assumption_settings.flash_suit_distance == 255 {
-                return SimpleResult::Success;
-            }
             if cx.reverse {
                 if local.flash_suit > 0 {
                     local.flash_suit = local.flash_suit.saturating_add(1);
                 }
+                if local.blue_suit > 0 {
+                    local.blue_suit = local.blue_suit.saturating_add(1);
+                }
             } else {
                 local.flash_suit = local.flash_suit.saturating_sub(1);
+                local.blue_suit = local.blue_suit.saturating_sub(1);
             }
             SimpleResult::Success
         }
@@ -2065,6 +2082,62 @@ fn apply_requirement_simple(
                 local.flash_suit = 0;
                 // Set shinecharge frames remaining to 180, to allow `comeInShinecharged`
                 // strats to be satisfied by a flash suit.
+                local.shinecharge_frames_remaining = 180;
+                SimpleResult::Success
+            }
+        }
+        Requirement::GainBlueSuit => {
+            if cx.reverse {
+                local.blue_suit = 0;
+            } else {
+                local.blue_suit = cx.settings.skill_assumption_settings.blue_suit_distance;
+            }
+            SimpleResult::Success
+        }
+        Requirement::NoBlueSuit => {
+            if cx.reverse {
+                (local.blue_suit == 0).into()
+            } else {
+                local.blue_suit = 0;
+                SimpleResult::Success
+            }
+        }
+        &Requirement::HaveBlueSuit {
+            carry_blue_suit_tech_idx,
+        } => {
+            if !cx.difficulty.tech[carry_blue_suit_tech_idx] {
+                // It isn't strictly necessary to check the tech here (since it already checked
+                // when obtaining the blue suit), but it could affect Forced item placement.
+                return SimpleResult::Failure;
+            }
+            if cx.reverse {
+                local.blue_suit = 1;
+                SimpleResult::Success
+            } else {
+                (local.blue_suit != 0).into()
+            }
+        }
+        &Requirement::BlueSuitShineCharge {
+            carry_blue_suit_tech_idx,
+        } => {
+            if !cx.difficulty.tech[carry_blue_suit_tech_idx] {
+                // It isn't strictly necessary to check the tech here (since it already checked
+                // when obtaining the blue suit), but it could affect Forced item placement.
+                return SimpleResult::Failure;
+            }
+            if cx.reverse {
+                if local.blue_suit != 0 {
+                    return SimpleResult::Failure;
+                }
+                local.blue_suit = 1;
+                local.shinecharge_frames_remaining = 0;
+                SimpleResult::Success
+            } else if local.blue_suit == 0 {
+                SimpleResult::Failure
+            } else {
+                local.blue_suit = 0;
+                // Set shinecharge frames remaining to 180, to allow `comeInShinecharged`
+                // strats to be satisfied by a blue suit.
                 local.shinecharge_frames_remaining = 180;
                 SimpleResult::Success
             }
@@ -2266,6 +2339,9 @@ pub fn is_bireachable_state(
         return false;
     }
     if reverse.flash_suit > forward.flash_suit {
+        return false;
+    }
+    if reverse.blue_suit > forward.blue_suit {
         return false;
     }
     true

@@ -27,16 +27,17 @@ use maprando_game::{
     GameData, GrappleJumpPosition, GrappleSwingBlock, HubLocation, Item, ItemId, ItemLocationId,
     Link, LinksDataGroup, MainEntranceCondition, Map, NodeId, NotableId, Physics, Requirement,
     RoomGeometryRoomIdx, RoomId, SidePlatformEntrance, SidePlatformEnvironment, SparkPosition,
-    StartLocation, TECH_ID_CAN_ARTIFICIAL_MORPH, TECH_ID_CAN_CARRY_BLUE_SUIT,
-    TECH_ID_CAN_CARRY_FLASH_SUIT, TECH_ID_CAN_DISABLE_EQUIPMENT, TECH_ID_CAN_ENTER_G_MODE,
-    TECH_ID_CAN_ENTER_G_MODE_IMMOBILE, TECH_ID_CAN_ENTER_R_MODE, TECH_ID_CAN_GRAPPLE_JUMP,
-    TECH_ID_CAN_GRAPPLE_TELEPORT, TECH_ID_CAN_HEATED_G_MODE, TECH_ID_CAN_HORIZONTAL_SHINESPARK,
-    TECH_ID_CAN_MIDAIR_SHINESPARK, TECH_ID_CAN_MOCKBALL, TECH_ID_CAN_MOONFALL,
-    TECH_ID_CAN_PRECISE_GRAPPLE, TECH_ID_CAN_R_MODE_KNOCKBACK_SPARK,
-    TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK, TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK_FROM_WATER,
-    TECH_ID_CAN_SAMUS_EATER_TELEPORT, TECH_ID_CAN_SHINECHARGE_MOVEMENT,
-    TECH_ID_CAN_SIDE_PLATFORM_CROSS_ROOM_JUMP, TECH_ID_CAN_SLOPE_SPARK, TECH_ID_CAN_SPEEDBALL,
-    TECH_ID_CAN_SPIKE_SUIT, TECH_ID_CAN_SPRING_BALL_BOUNCE, TECH_ID_CAN_STATIONARY_SPIN_JUMP,
+    StartLocation, TECH_ID_CAN_ARTIFICIAL_MORPH, TECH_ID_CAN_BLUE_SUIT_G_MODE_SETUP,
+    TECH_ID_CAN_CARRY_BLUE_SUIT, TECH_ID_CAN_CARRY_FLASH_SUIT, TECH_ID_CAN_DISABLE_EQUIPMENT,
+    TECH_ID_CAN_ENTER_G_MODE, TECH_ID_CAN_ENTER_G_MODE_IMMOBILE, TECH_ID_CAN_ENTER_R_MODE,
+    TECH_ID_CAN_GRAPPLE_JUMP, TECH_ID_CAN_GRAPPLE_TELEPORT, TECH_ID_CAN_HEATED_G_MODE,
+    TECH_ID_CAN_HORIZONTAL_SHINESPARK, TECH_ID_CAN_MIDAIR_SHINESPARK, TECH_ID_CAN_MOCKBALL,
+    TECH_ID_CAN_MOONFALL, TECH_ID_CAN_PRECISE_GRAPPLE, TECH_ID_CAN_R_MODE_KNOCKBACK_SPARK,
+    TECH_ID_CAN_RIGHT_SIDE_DASHLESS_DOOR_STUCK, TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK,
+    TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK_FROM_WATER, TECH_ID_CAN_SAMUS_EATER_TELEPORT,
+    TECH_ID_CAN_SHINECHARGE_MOVEMENT, TECH_ID_CAN_SIDE_PLATFORM_CROSS_ROOM_JUMP,
+    TECH_ID_CAN_SLOPE_SPARK, TECH_ID_CAN_SPEEDBALL, TECH_ID_CAN_SPIKE_SUIT,
+    TECH_ID_CAN_SPRING_BALL_BOUNCE, TECH_ID_CAN_STATIONARY_SPIN_JUMP,
     TECH_ID_CAN_STUTTER_WATER_SHINECHARGE, TECH_ID_CAN_SUPER_SINK, TECH_ID_CAN_TEMPORARY_BLUE,
     TECH_ID_CAN_TRICKY_CARRY_FLASH_SUIT, TechId, TemporaryBlueDirection, TraversalId, VertexId,
     VertexKey,
@@ -848,6 +849,7 @@ impl<'a> Preprocessor<'a> {
                 *speed_booster,
                 min_tiles.get(),
                 max_tiles.get(),
+                false,
             ),
             MainEntranceCondition::ComeInJumping {
                 speed_booster,
@@ -858,6 +860,7 @@ impl<'a> Preprocessor<'a> {
                 *speed_booster,
                 min_tiles.get(),
                 max_tiles.get(),
+                true,
             ),
             MainEntranceCondition::ComeInSpaceJumping {
                 speed_booster,
@@ -1081,6 +1084,7 @@ impl<'a> Preprocessor<'a> {
         speed_booster: Option<bool>,
         min_tiles: f32,
         max_tiles: f32,
+        jumping: bool,
     ) -> Option<Requirement> {
         match exit_condition {
             ExitCondition::LeaveWithRunway {
@@ -1098,6 +1102,9 @@ impl<'a> Preprocessor<'a> {
                     return None;
                 }
                 let mut reqs: Vec<Requirement> = vec![];
+                if !jumping || min_tiles > 0.0 {
+                    reqs.push(Requirement::NoBlueSuit);
+                }
                 if speed_booster == Some(true) {
                     reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
                 }
@@ -1153,7 +1160,9 @@ impl<'a> Preprocessor<'a> {
                 if remote_runway_length < min_tiles {
                     return None;
                 }
-                let mut reqs: Vec<Requirement> = vec![Requirement::Item(Item::SpaceJump as ItemId)];
+                let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::Item(Item::SpaceJump as ItemId));
+                reqs.push(Requirement::NoBlueSuit);
                 if speed_booster == Some(true) {
                     reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
                 }
@@ -1312,6 +1321,7 @@ impl<'a> Preprocessor<'a> {
                 }
 
                 let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::NoBlueSuit);
                 let combined_runway_length = effective_length + runway_length;
 
                 if !self.add_run_speed_reqs(
@@ -1377,6 +1387,7 @@ impl<'a> Preprocessor<'a> {
                 }
 
                 let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::NoBlueSuit);
                 let combined_runway_length = effective_length + runway_length;
                 reqs.push(Requirement::make_shinecharge(
                     combined_runway_length,
@@ -1425,9 +1436,11 @@ impl<'a> Preprocessor<'a> {
                     runway_length = 0.0;
                 }
 
-                let mut reqs: Vec<Requirement> = vec![Requirement::Tech(
+                let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::NoBlueSuit);
+                reqs.push(Requirement::Tech(
                     self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPEEDBALL],
-                )];
+                ));
                 let combined_runway_length = effective_length + runway_length;
                 reqs.push(Requirement::SpeedBall {
                     used_tiles: Float::new(combined_runway_length),
@@ -1481,15 +1494,12 @@ impl<'a> Preprocessor<'a> {
                 if *blue == BlueOption::Yes {
                     return None;
                 }
-                let mut reqs: Vec<Requirement> = vec![Requirement::Tech(
-                    self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPEEDBALL],
-                )];
-                reqs.push(Requirement::Item(
-                    self.game_data.item_isv.index_by_key["Morph"],
-                ));
-                reqs.push(Requirement::Item(
-                    self.game_data.item_isv.index_by_key["SpeedBooster"],
-                ));
+                let mut reqs: Vec<Requirement> = vec![
+                    Requirement::NoBlueSuit,
+                    Requirement::Tech(self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPEEDBALL]),
+                    Requirement::Item(self.game_data.item_isv.index_by_key["Morph"]),
+                    Requirement::Item(self.game_data.item_isv.index_by_key["SpeedBooster"]),
+                ];
                 if !self.add_run_speed_reqs(
                     remote_runway_length,
                     min_extra_run_speed.get(),
@@ -1527,6 +1537,10 @@ impl<'a> Preprocessor<'a> {
                 let max_extra_run_speed = max_extra_run_speed.get();
                 let runway_max_speed = get_max_extra_run_speed(remote_runway_length);
 
+                let mut reqs: Vec<Requirement> = vec![];
+                if min_extra_run_speed > 0.0 || entrance_min_extra_run_speed > 0.0 {
+                    reqs.push(Requirement::NoBlueSuit);
+                }
                 let overall_max_extra_run_speed = f32::min(
                     max_extra_run_speed,
                     f32::min(entrance_max_extra_run_speed, runway_max_speed),
@@ -1540,7 +1554,7 @@ impl<'a> Preprocessor<'a> {
                 if *blue == BlueOption::Yes {
                     return None;
                 }
-                Some(Requirement::Free)
+                Some(Requirement::make_and(reqs))
             }
             ExitCondition::LeaveWithRunway {
                 effective_length,
@@ -1551,7 +1565,9 @@ impl<'a> Preprocessor<'a> {
             } => {
                 let effective_length = effective_length.get();
                 let mut reqs: Vec<Requirement> = vec![];
-
+                if min_extra_run_speed.get() > 0.0 || entrance_min_extra_run_speed > 0.0 {
+                    reqs.push(Requirement::NoBlueSuit);
+                }
                 if *physics != Some(Physics::Air) {
                     reqs.push(Requirement::Item(Item::Gravity as ItemId));
                 }
@@ -1602,6 +1618,9 @@ impl<'a> Preprocessor<'a> {
             } => {
                 let mut reqs: Vec<Requirement> = vec![];
 
+                if min_extra_run_speed.get() > 0.0 || entrance_min_extra_run_speed > 0.0 {
+                    reqs.push(Requirement::NoBlueSuit);
+                }
                 if !self.add_run_speed_reqs(
                     remote_runway_length.get(),
                     min_extra_run_speed.get(),
@@ -1616,10 +1635,11 @@ impl<'a> Preprocessor<'a> {
                 if *blue == BlueOption::No {
                     return None;
                 }
-                Some(Requirement::make_shinecharge(
+                reqs.push(Requirement::make_shinecharge(
                     remote_runway_length.get(),
                     *heated,
-                ))
+                ));
+                Some(Requirement::make_and(reqs))
             }
             ExitCondition::LeaveWithRunway {
                 effective_length,
@@ -1631,6 +1651,9 @@ impl<'a> Preprocessor<'a> {
                 let effective_length = effective_length.get();
                 let mut reqs: Vec<Requirement> = vec![];
 
+                if min_extra_run_speed.get() > 0.0 || entrance_min_extra_run_speed > 0.0 {
+                    reqs.push(Requirement::NoBlueSuit);
+                }
                 if !self.add_run_speed_reqs(
                     effective_length,
                     min_extra_run_speed.get(),
@@ -1691,7 +1714,7 @@ impl<'a> Preprocessor<'a> {
                 max_extra_run_speed,
             } => {
                 let mut reqs: Vec<Requirement> = vec![];
-
+                reqs.push(Requirement::NoBlueSuit);
                 if !self.add_run_speed_reqs(
                     remote_runway_length.get(),
                     min_extra_run_speed.get(),
@@ -1734,6 +1757,7 @@ impl<'a> Preprocessor<'a> {
         remote_and_landing_min_tiles: Vec<(f32, f32)>,
     ) -> Option<Requirement> {
         let mut reqs: Vec<Requirement> = vec![];
+        reqs.push(Requirement::NoBlueSuit);
         if speed_booster == Some(true) {
             reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
         }
@@ -1810,6 +1834,7 @@ impl<'a> Preprocessor<'a> {
         exit_movement_type: BounceMovementType,
     ) -> Option<Requirement> {
         let mut reqs: Vec<Requirement> = vec![];
+        reqs.push(Requirement::NoBlueSuit);
         if speed_booster == Some(true) {
             reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
         }
@@ -1959,6 +1984,7 @@ impl<'a> Preprocessor<'a> {
                     return None;
                 }
                 let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::NoBlueSuit);
 
                 if !self.add_run_speed_reqs(
                     remote_runway_length,
@@ -2007,6 +2033,7 @@ impl<'a> Preprocessor<'a> {
                     return None;
                 }
                 let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::NoBlueSuit);
 
                 if !self.add_run_speed_reqs(
                     remote_runway_length,
@@ -2044,6 +2071,7 @@ impl<'a> Preprocessor<'a> {
             } => {
                 let effective_length = effective_length.get();
                 let mut reqs: Vec<Requirement> = vec![];
+                reqs.push(Requirement::NoBlueSuit);
 
                 if !self.add_run_speed_reqs(
                     effective_length,
@@ -2093,10 +2121,16 @@ impl<'a> Preprocessor<'a> {
         ));
         match exit_condition {
             ExitCondition::LeaveShinecharged { .. } => Some(Requirement::Free),
-            ExitCondition::LeaveNormally {} => Some(Requirement::UseFlashSuit {
-                carry_flash_suit_tech_idx: self.game_data.tech_isv.index_by_key
-                    [&TECH_ID_CAN_CARRY_FLASH_SUIT],
-            }),
+            ExitCondition::LeaveNormally {} => Some(Requirement::make_or(vec![
+                Requirement::UseFlashSuit {
+                    carry_flash_suit_tech_idx: self.game_data.tech_isv.index_by_key
+                        [&TECH_ID_CAN_CARRY_FLASH_SUIT],
+                },
+                Requirement::BlueSuitShineCharge {
+                    carry_blue_suit_tech_idx: self.game_data.tech_isv.index_by_key
+                        [&TECH_ID_CAN_CARRY_BLUE_SUIT],
+                },
+            ])),
             ExitCondition::LeaveWithRunway {
                 effective_length,
                 min_extra_run_speed: _,
@@ -2136,10 +2170,16 @@ impl<'a> Preprocessor<'a> {
         exit_condition: &ExitCondition,
     ) -> Option<Requirement> {
         match exit_condition {
-            ExitCondition::LeaveNormally {} => Some(Requirement::UseFlashSuit {
-                carry_flash_suit_tech_idx: self.game_data.tech_isv.index_by_key
-                    [&TECH_ID_CAN_CARRY_FLASH_SUIT],
-            }),
+            ExitCondition::LeaveNormally {} => Some(Requirement::make_or(vec![
+                Requirement::UseFlashSuit {
+                    carry_flash_suit_tech_idx: self.game_data.tech_isv.index_by_key
+                        [&TECH_ID_CAN_CARRY_FLASH_SUIT],
+                },
+                Requirement::BlueSuitShineCharge {
+                    carry_blue_suit_tech_idx: self.game_data.tech_isv.index_by_key
+                        [&TECH_ID_CAN_CARRY_BLUE_SUIT],
+                },
+            ])),
             ExitCondition::LeaveShinecharged { physics } => {
                 if *physics != Some(Physics::Air) {
                     return None;
@@ -2206,6 +2246,7 @@ impl<'a> Preprocessor<'a> {
                     self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_STUTTER_WATER_SHINECHARGE],
                 ));
                 reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                reqs.push(Requirement::NoBlueSuit);
                 if include_shinecharge {
                     reqs.push(Requirement::ShineCharge {
                         used_tiles: Float::new(45.0),
@@ -2317,6 +2358,7 @@ impl<'a> Preprocessor<'a> {
                 }
                 Some(Requirement::make_and(vec![
                     Requirement::NoFlashSuit,
+                    Requirement::NoBlueSuit,
                     Requirement::Tech(
                         self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_TEMPORARY_BLUE],
                     ),
@@ -2424,10 +2466,26 @@ impl<'a> Preprocessor<'a> {
                     ));
                     if *physics != Some(Physics::Air) {
                         reqs.push(Requirement::Or(vec![
-                            Requirement::Item(Item::Gravity as ItemId),
+                            Requirement::And(vec![
+                                Requirement::Item(Item::Gravity as ItemId),
+                                Requirement::NoBlueSuit,
+                            ]),
+                            // TODO: add disable equipment requirement:
                             Requirement::Tech(
                                 self.game_data.tech_isv.index_by_key
                                     [&TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK_FROM_WATER],
+                            ),
+                            Requirement::Tech(
+                                self.game_data.tech_isv.index_by_key
+                                    [&TECH_ID_CAN_RIGHT_SIDE_DASHLESS_DOOR_STUCK],
+                            ),
+                        ]));
+                    } else {
+                        reqs.push(Requirement::Or(vec![
+                            Requirement::NoBlueSuit,
+                            Requirement::Tech(
+                                self.game_data.tech_isv.index_by_key
+                                    [&TECH_ID_CAN_RIGHT_SIDE_DASHLESS_DOOR_STUCK],
                             ),
                         ]));
                     }
@@ -2464,6 +2522,13 @@ impl<'a> Preprocessor<'a> {
                     ),
                     Requirement::Item(Item::XRayScope as ItemId),
                     Requirement::NoFlashSuit,
+                    Requirement::Or(vec![
+                        Requirement::NoBlueSuit,
+                        Requirement::Tech(
+                            self.game_data.tech_isv.index_by_key
+                                [&TECH_ID_CAN_BLUE_SUIT_G_MODE_SETUP],
+                        ),
+                    ]),
                     Requirement::ReserveTrigger {
                         min_reserve_energy: 1.into(),
                         max_reserve_energy: 400.into(),
@@ -2532,6 +2597,12 @@ impl<'a> Preprocessor<'a> {
                     ]));
                 }
                 reqs.push(Requirement::NoFlashSuit);
+                reqs.push(Requirement::Or(vec![
+                    Requirement::NoBlueSuit,
+                    Requirement::Tech(
+                        self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_BLUE_SUIT_G_MODE_SETUP],
+                    ),
+                ]));
                 reqs.push(Requirement::Item(Item::XRayScope as ItemId));
 
                 let mobile_req = if *knockback {
@@ -2697,6 +2768,7 @@ impl<'a> Preprocessor<'a> {
                         self.game_data.tech_isv.index_by_key
                             [&TECH_ID_CAN_SIDE_PLATFORM_CROSS_ROOM_JUMP],
                     ),
+                    Requirement::NoBlueSuit,
                     Requirement::make_or(reqs_or_vec),
                 ]))
             }

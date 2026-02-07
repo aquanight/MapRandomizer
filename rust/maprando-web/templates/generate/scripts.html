@@ -58,6 +58,7 @@ function applySkillPreset(preset) {
     document.getElementById("doorStuckLeniency").value = preset.door_stuck_leniency;
     document.getElementById("spikeSuitLeniency").value = preset.spike_suit_leniency;
     document.getElementById("flashSuitDistance").value = preset.flash_suit_distance;
+    document.getElementById("blueSuitDistance").value = preset.blue_suit_distance;
     document.getElementById("spikeXModeLeniency").value = preset.spike_xmode_leniency;
     document.getElementById("spikeSpeedKeepLeniency").value = preset.spike_speed_keep_leniency;
     document.getElementById("elevatorCFLeniency").value = preset.elevator_cf_leniency;
@@ -221,6 +222,7 @@ function buildSettingsObject() {
             "door_stuck_leniency": parseFloat(formData.get("door_stuck_leniency")),
             "spike_suit_leniency": parseFloat(formData.get("spike_suit_leniency")),
             "flash_suit_distance": parseFloat(formData.get("flash_suit_distance")),
+            "blue_suit_distance": parseFloat(formData.get("blue_suit_distance")),
             "spike_xmode_leniency": parseFloat(formData.get("spike_xmode_leniency")),
             "spike_speed_keep_leniency": parseFloat(formData.get("spike_speed_keep_leniency")),
             "elevator_cf_leniency": parseFloat(formData.get("elevator_cf_leniency")),

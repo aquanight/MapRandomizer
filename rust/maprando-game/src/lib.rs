@@ -46,10 +46,12 @@ pub const TECH_ID_CAN_TEMPORARY_BLUE: TechId = 146;
 pub const TECH_ID_CAN_STATIONARY_SPIN_JUMP: TechId = 63;
 pub const TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK: TechId = 157;
 pub const TECH_ID_CAN_RIGHT_SIDE_DOOR_STUCK_FROM_WATER: TechId = 158;
+pub const TECH_ID_CAN_RIGHT_SIDE_DASHLESS_DOOR_STUCK: TechId = 220;
 pub const TECH_ID_CAN_ENTER_R_MODE: TechId = 161;
 pub const TECH_ID_CAN_ENTER_G_MODE: TechId = 162;
 pub const TECH_ID_CAN_ENTER_G_MODE_IMMOBILE: TechId = 163;
 pub const TECH_ID_CAN_ARTIFICIAL_MORPH: TechId = 164;
+pub const TECH_ID_CAN_BLUE_SUIT_G_MODE_SETUP: TechId = 218;
 pub const TECH_ID_CAN_HEATED_G_MODE: TechId = 198;
 pub const TECH_ID_CAN_MOONFALL: TechId = 25;
 pub const TECH_ID_CAN_PRECISE_GRAPPLE: TechId = 51;
@@ -409,6 +411,14 @@ pub enum Requirement {
         carry_flash_suit_tech_idx: TechIdx,
     },
     NoFlashSuit,
+    GainBlueSuit,
+    HaveBlueSuit {
+        carry_blue_suit_tech_idx: TechIdx,
+    },
+    BlueSuitShineCharge {
+        carry_blue_suit_tech_idx: TechIdx,
+    },
+    NoBlueSuit,
     And(Vec<Requirement>),
     Or(Vec<Requirement>),
 }
@@ -2989,17 +2999,19 @@ impl GameData {
                         [&TECH_ID_CAN_CARRY_FLASH_SUIT],
                 });
             } else if key == "gainBlueSuit" {
-                // Not yet implemented.
-                return Ok(Requirement::Never);
+                return Ok(Requirement::GainBlueSuit);
             } else if key == "noBlueSuit" {
-                // Not yet implemented.
-                return Ok(Requirement::Free);
+                return Ok(Requirement::NoBlueSuit);
             } else if key == "haveBlueSuit" {
-                // Not yet implemented.
-                return Ok(Requirement::Never);
+                return Ok(Requirement::HaveBlueSuit {
+                    carry_blue_suit_tech_idx: self.tech_isv.index_by_key
+                        [&TECH_ID_CAN_CARRY_BLUE_SUIT],
+                });
             } else if key == "blueSuitShinecharge" {
-                // Not yet implemented.
-                return Ok(Requirement::Never);
+                return Ok(Requirement::BlueSuitShineCharge {
+                    carry_blue_suit_tech_idx: self.tech_isv.index_by_key
+                        [&TECH_ID_CAN_CARRY_BLUE_SUIT],
+                });
             } else if key == "tech" {
                 return self.get_tech_requirement(value.as_str().unwrap(), false);
             } else if key == "notable" {
@@ -4516,6 +4528,12 @@ impl GameData {
                 }
                 Some(false) => {
                     requires_vec.push(Requirement::NoFlashSuit);
+                }
+                Some(true) => {}
+            }
+            match strat_json["blueSuitChecked"].as_bool() {
+                None | Some(false) => {
+                    requires_vec.push(Requirement::NoBlueSuit);
                 }
                 Some(true) => {}
             }

@@ -11,6 +11,7 @@
     "bomb_into_cf_leniency": 5,
     "jump_into_cf_leniency": 9,
     "flash_suit_distance": 5,
+    "blue_suit_distance": 7,
     "spike_suit_leniency": 15,
     "spike_xmode_leniency": 2,
     "spike_speed_keep_leniency": 4,

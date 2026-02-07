@@ -40,6 +40,7 @@ pub struct SkillAssumptionSettings {
     pub bomb_into_cf_leniency: i32,
     pub jump_into_cf_leniency: i32,
     pub flash_suit_distance: u8,
+    pub blue_suit_distance: u8,
     pub spike_suit_leniency: i32,
     pub spike_xmode_leniency: i32,
     pub spike_speed_keep_leniency: i32,
@@ -687,6 +688,9 @@ fn upgrade_other_skill_settings(settings: &mut serde_json::Value) -> Result<()> 
     }
     if !skill_assumption_settings.contains_key("flash_suit_distance") {
         skill_assumption_settings.insert("flash_suit_distance".to_string(), (255).into());
+    }
+    if !skill_assumption_settings.contains_key("blue_suit_distance") {
+        skill_assumption_settings.insert("blue_suit_distance".to_string(), (255).into());
     }
     if !skill_assumption_settings.contains_key("spike_suit_leniency") {
         skill_assumption_settings.insert("spike_suit_leniency".to_string(), 2.into());
