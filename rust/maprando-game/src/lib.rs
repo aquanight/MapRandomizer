@@ -1995,6 +1995,7 @@ impl GameData {
         let numerics_json = read_json(&self.sm_json_data_path.join("numerics.json"))?;
         ensure!(numerics_json["numericCategories"].is_array());
         for category_json in numerics_json["numericCategories"].members() {
+            let category = category_json["name"].as_str().unwrap();
             ensure!(category_json["numerics"].is_array());
             for num_json in category_json["numerics"].members() {
                 if self
@@ -2010,7 +2011,19 @@ impl GameData {
 
                 self.numeric_isv.add(num_json["name"].as_str().unwrap());
                 let numeric = self.parse_numeric(&num_json["value"])?;
-                self.numeric_values.push(numeric.clone());
+                match category {
+                    "Base Parameters" => {
+                        // Ignore the default value: this ensures that an error will occur
+                        // if it is not overridden, as all base parameters should be.
+                        self.numeric_values.push(Numeric::Constant(-1));
+                    }
+                    "Derived Parameters" => {
+                        self.numeric_values.push(numeric.clone());
+                    }
+                    _ => {
+                        bail!("Unexpected numeric category: {category}");
+                    }
+                }
                 self.numeric_json.push(num_json.clone());
             }
         }
