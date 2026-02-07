@@ -1445,7 +1445,7 @@
             "room_id": 61,
             "notable_id": 5,
             "room_name": "Pink Brinstar Wave Gate Room",
-            "notable_name": "Screw and Kago to Ride the Elevator",
+            "notable_name": "Kago to Ride the Elevator",
             "enabled": true
         },
         {
@@ -1940,13 +1940,6 @@
         },
         {
             "room_id": 59,
-            "notable_id": 1,
-            "room_name": "Big Pink",
-            "notable_name": "Break Raised Bomb Blocks with Blue Speed",
-            "enabled": true
-        },
-        {
-            "room_id": 59,
             "notable_id": 3,
             "room_name": "Big Pink",
             "notable_name": "Super Block Speedball",
@@ -2426,6 +2419,13 @@
             "notable_id": 4,
             "room_name": "Green Hill Zone",
             "notable_name": "Grapple Gate Glitch",
+            "enabled": true
+        },
+        {
+            "room_id": 59,
+            "notable_id": 1,
+            "room_name": "Big Pink",
+            "notable_name": "Break Raised Bomb Blocks with Blue Speed",
             "enabled": true
         },
         {

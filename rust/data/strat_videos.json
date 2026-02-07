@@ -8681,19 +8681,19 @@
   },
   {
     "room_id": 49,
-    "strat_id": 16,
-    "video_id": 9643,
-    "created_user": "Sam",
-    "note": "",
-    "dev_note": ""
-  },
-  {
-    "room_id": 49,
     "strat_id": 11,
     "video_id": 5323,
     "created_user": "maddo",
     "note": "",
     "dev_note": "canSpikeSuit"
+  },
+  {
+    "room_id": 49,
+    "strat_id": 16,
+    "video_id": 9643,
+    "created_user": "Sam",
+    "note": "",
+    "dev_note": ""
   },
   {
     "room_id": 44,
@@ -11962,9 +11962,17 @@
   {
     "room_id": 59,
     "strat_id": 110,
+    "video_id": 9771,
+    "created_user": "maddo",
+    "note": "Jump in with upward momentum",
+    "dev_note": ""
+  },
+  {
+    "room_id": 59,
+    "strat_id": 110,
     "video_id": 4676,
     "created_user": "Sam",
-    "note": "",
+    "note": "Speedball",
     "dev_note": ""
   },
   {

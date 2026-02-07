@@ -1,6 +1,8 @@
 {
   "must_patch_categories": ["Randomizer Dependent", "Leniency"],
   "skip_helpers": [
+    "h_greenGateGlitchLeniency",
+    "h_heatedGreenGateGlitchLeniency",
     "h_SpringwallOverSpikes",
     "h_heatedSpringwall",
     "h_heatedIBJFromSpikes",
@@ -9,7 +11,6 @@
     "h_partialEnemyDamageReduction",
     "h_doorImmediatelyClosedFix",
     "h_openZebetitesLeniency",
-    "h_CrystalSparkLeniency",
     "h_IBJFromThorns",
     "h_IBJFromSpikes",
     "h_doubleEquipmentScreenCycleFrames",
@@ -24,11 +25,7 @@
     "h_fullEnemyDamageReduction": ["Varia", "Gravity"],
     "h_partialSpikeDamageReduction": [{"or": ["Varia", "Gravity"]}],
     "h_blueGateGlitchLeniency": ["i_blueGateGlitchLeniency"],
-    "h_greenGateGlitchLeniency": ["i_greenGateGlitchLeniency"],
     "h_heatedBlueGateGlitchLeniency": ["i_heatedBlueGateGlitchLeniency"],
-    "h_heatedGreenGateGlitchLeniency": ["i_heatedGreenGateGlitchLeniency"],
-    "h_bombIntoCrystalFlashClipLeniency": ["i_bombIntoCrystalFlashClipLeniency"],
-    "h_jumpIntoCrystalFlashClipLeniency": ["i_jumpIntoCrystalFlashClipLeniency"],
     "h_allItemsSpawned": ["f_AllItemsSpawn"],
     "h_EverestMorphTunnelExpanded": [],
     "h_activateBombTorizo": [],
@@ -51,7 +48,6 @@
     "h_MainHallElevatorFrames": ["i_MainHallElevatorFrames"],
     "h_equipmentScreenCycleFrames": ["i_equipmentScreenCycleFrames"],
     "h_ShinesparksCostEnergy": ["i_ShinesparksCostEnergy"],
-    "h_ElevatorCrystalFlashLeniency": ["i_elevatorCrystalFlashLeniency"],
     "h_heatedCrystalFlashRefill": [
       {"or": [
         {"partialRefill": {"type": "Energy", "limit": 1440}},

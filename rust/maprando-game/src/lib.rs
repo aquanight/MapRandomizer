@@ -345,16 +345,12 @@ pub enum Requirement {
     EquipmentScreenCycleFrames,
     ShinesparksCostEnergy,
     SupersDoubleDamageMotherBrain,
-    GateGlitchLeniency {
-        green: bool,
+    BlueGateGlitchLeniency {
         heated: bool,
     },
     HeatedDoorStuckLeniency {
         heat_frames: Capacity,
     },
-    ElevatorCFLeniency,
-    BombIntoCrystalFlashClipLeniency {},
-    JumpIntoCrystalFlashClipLeniency {},
     ReserveTrigger {
         min_reserve_energy: Numeric,
         max_reserve_energy: Numeric,
@@ -2355,31 +2351,9 @@ impl GameData {
             } else if value == "i_SupersDoubleDamageMotherBrain" {
                 return Ok(Requirement::SupersDoubleDamageMotherBrain);
             } else if value == "i_blueGateGlitchLeniency" {
-                return Ok(Requirement::GateGlitchLeniency {
-                    green: false,
-                    heated: false,
-                });
-            } else if value == "i_greenGateGlitchLeniency" {
-                return Ok(Requirement::GateGlitchLeniency {
-                    green: true,
-                    heated: false,
-                });
+                return Ok(Requirement::BlueGateGlitchLeniency { heated: false });
             } else if value == "i_heatedBlueGateGlitchLeniency" {
-                return Ok(Requirement::GateGlitchLeniency {
-                    green: false,
-                    heated: true,
-                });
-            } else if value == "i_heatedGreenGateGlitchLeniency" {
-                return Ok(Requirement::GateGlitchLeniency {
-                    green: true,
-                    heated: true,
-                });
-            } else if value == "i_elevatorCrystalFlashLeniency" {
-                return Ok(Requirement::ElevatorCFLeniency);
-            } else if value == "i_bombIntoCrystalFlashClipLeniency" {
-                return Ok(Requirement::BombIntoCrystalFlashClipLeniency {});
-            } else if value == "i_jumpIntoCrystalFlashClipLeniency" {
-                return Ok(Requirement::JumpIntoCrystalFlashClipLeniency {});
+                return Ok(Requirement::BlueGateGlitchLeniency { heated: true });
             } else if value == "i_MotherBrainBarrier1Clear" {
                 return Ok(Requirement::MotherBrainBarrierClear(0));
             } else if value == "i_MotherBrainBarrier2Clear" {

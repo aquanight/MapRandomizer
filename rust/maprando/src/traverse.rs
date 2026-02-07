@@ -167,10 +167,9 @@ fn compute_cost(
     ]
 }
 
-fn apply_gate_glitch_leniency(
+fn apply_blue_gate_glitch_leniency(
     local: &mut LocalState,
     global: &GlobalState,
-    green: bool,
     heated: bool,
     difficulty: &DifficultyConfig,
     reverse: bool,
@@ -183,20 +182,16 @@ fn apply_gate_glitch_leniency(
             return false;
         }
     }
-    if green {
-        local.use_supers(difficulty.gate_glitch_leniency, &global.inventory, reverse)
+    let missiles_available = local.missiles_available(&global.inventory, reverse);
+    if missiles_available >= difficulty.gate_glitch_leniency {
+        local.use_missiles(difficulty.gate_glitch_leniency, &global.inventory, reverse)
     } else {
-        let missiles_available = local.missiles_available(&global.inventory, reverse);
-        if missiles_available >= difficulty.gate_glitch_leniency {
-            local.use_missiles(difficulty.gate_glitch_leniency, &global.inventory, reverse)
-        } else {
-            assert!(local.use_missiles(missiles_available, &global.inventory, reverse));
-            local.use_supers(
-                difficulty.gate_glitch_leniency - missiles_available,
-                &global.inventory,
-                reverse,
-            )
-        }
+        assert!(local.use_missiles(missiles_available, &global.inventory, reverse));
+        local.use_supers(
+            difficulty.gate_glitch_leniency - missiles_available,
+            &global.inventory,
+            reverse,
+        )
     }
 }
 
@@ -1447,8 +1442,8 @@ fn apply_requirement_simple(
                 .use_power_bombs(count, &cx.global.inventory, cx.reverse)
                 .into()
         }
-        Requirement::GateGlitchLeniency { green, heated } => {
-            apply_gate_glitch_leniency(local, cx.global, *green, *heated, cx.difficulty, cx.reverse)
+        Requirement::BlueGateGlitchLeniency { heated } => {
+            apply_blue_gate_glitch_leniency(local, cx.global, *heated, cx.difficulty, cx.reverse)
                 .into()
         }
         Requirement::HeatedDoorStuckLeniency { heat_frames } => {
@@ -1464,27 +1459,6 @@ fn apply_requirement_simple(
                 SimpleResult::Success
             }
         }
-        Requirement::ElevatorCFLeniency => local
-            .use_power_bombs(
-                cx.difficulty.elevator_cf_leniency,
-                &cx.global.inventory,
-                cx.reverse,
-            )
-            .into(),
-        Requirement::BombIntoCrystalFlashClipLeniency {} => local
-            .use_power_bombs(
-                cx.difficulty.bomb_into_cf_leniency,
-                &cx.global.inventory,
-                cx.reverse,
-            )
-            .into(),
-        Requirement::JumpIntoCrystalFlashClipLeniency {} => local
-            .use_power_bombs(
-                cx.difficulty.jump_into_cf_leniency,
-                &cx.global.inventory,
-                cx.reverse,
-            )
-            .into(),
         Requirement::MissilesAvailable(count) => {
             let count = count.resolve(&cx.difficulty.numerics);
             local

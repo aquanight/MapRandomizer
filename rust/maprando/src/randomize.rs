@@ -128,9 +128,20 @@ impl DifficultyConfig {
 
         let mut numerics: Vec<Capacity> = vec![-1; game_data.numeric_isv.keys.len()];
         let numeric_overrides: Vec<(&'static str, i32)> = vec![
+            ("n_gateGlitchLenience", skill.gate_glitch_leniency),
             ("n_speedKeepLenience", skill.spike_speed_keep_leniency),
             ("n_spikeXModeLenience", skill.spike_xmode_leniency),
             ("n_spikeSuitLenience", skill.spike_suit_leniency),
+            (
+                "n_bombIntoCrystalFlashLenience",
+                skill.bomb_into_cf_leniency,
+            ),
+            (
+                "n_jumpIntoCrystalFlashLenience",
+                skill.jump_into_cf_leniency,
+            ),
+            ("n_CrystalSparkLenience", 8), // TODO: add skill setting for this
+            ("n_elevatorCrystalFlashLenience", skill.elevator_cf_leniency),
         ];
         for (name, value) in numeric_overrides {
             if let Some(&idx) = game_data.numeric_isv.index_by_key.get(name) {
