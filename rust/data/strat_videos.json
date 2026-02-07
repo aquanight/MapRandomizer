@@ -3924,7 +3924,15 @@
     "strat_id": 23,
     "video_id": 8936,
     "created_user": "nn",
-    "note": "",
+    "note": "Standing jump",
+    "dev_note": ""
+  },
+  {
+    "room_id": 26,
+    "strat_id": 23,
+    "video_id": 8938,
+    "created_user": "nn",
+    "note": "Crouched angle-down jump",
     "dev_note": ""
   },
   {
@@ -4293,6 +4301,14 @@
     "video_id": 9651,
     "created_user": "Sam",
     "note": "Gravity",
+    "dev_note": ""
+  },
+  {
+    "room_id": 36,
+    "strat_id": 39,
+    "video_id": 9581,
+    "created_user": "nn",
+    "note": "",
     "dev_note": ""
   },
   {
@@ -8229,6 +8245,14 @@
     "video_id": 5535,
     "created_user": "Sam",
     "note": "From Halfie Climb (Bottom Position)",
+    "dev_note": ""
+  },
+  {
+    "room_id": 51,
+    "strat_id": 102,
+    "video_id": 9058,
+    "created_user": "nn",
+    "note": "",
     "dev_note": ""
   },
   {
@@ -14177,6 +14201,14 @@
   },
   {
     "room_id": 70,
+    "strat_id": 54,
+    "video_id": 9420,
+    "created_user": "nn",
+    "note": "",
+    "dev_note": ""
+  },
+  {
+    "room_id": 70,
     "strat_id": 7,
     "video_id": 7948,
     "created_user": "Sam",
@@ -16574,6 +16606,14 @@
     "created_user": "Sam",
     "note": "",
     "dev_note": ""
+  },
+  {
+    "room_id": 83,
+    "strat_id": 4,
+    "video_id": 9777,
+    "created_user": "maddo",
+    "note": "With blue suit",
+    "dev_note": "canBlueSuitGModeSetup"
   },
   {
     "room_id": 83,
@@ -21857,6 +21897,14 @@
   },
   {
     "room_id": 112,
+    "strat_id": 72,
+    "video_id": 9452,
+    "created_user": "nn",
+    "note": "",
+    "dev_note": ""
+  },
+  {
+    "room_id": 112,
     "strat_id": 3,
     "video_id": 8166,
     "created_user": "maddo",
@@ -23438,6 +23486,14 @@
     "created_user": "Sam",
     "note": "Suitless",
     "dev_note": ""
+  },
+  {
+    "room_id": 101,
+    "strat_id": 4,
+    "video_id": 9246,
+    "created_user": "aquanight",
+    "note": "",
+    "dev_note": "canReserveTriggerBufferXRay"
   },
   {
     "room_id": 101,

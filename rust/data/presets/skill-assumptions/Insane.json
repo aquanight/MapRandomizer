@@ -724,6 +724,21 @@
             "enabled": true
         },
         {
+            "id": 215,
+            "name": "canCarryBlueSuit",
+            "enabled": true
+        },
+        {
+            "id": 216,
+            "name": "canRModeSparkInterrupt",
+            "enabled": true
+        },
+        {
+            "id": 217,
+            "name": "canCrystalSpark",
+            "enabled": true
+        },
+        {
             "id": 154,
             "name": "canXRayCancelShinecharge",
             "enabled": true
@@ -854,8 +869,23 @@
             "enabled": true
         },
         {
+            "id": 227,
+            "name": "canUnderwaterCrystalSpark",
+            "enabled": true
+        },
+        {
+            "id": 223,
+            "name": "canXModeBlueSuit",
+            "enabled": true
+        },
+        {
             "id": 143,
             "name": "canSpeedKeep",
+            "enabled": true
+        },
+        {
+            "id": 230,
+            "name": "canReserveTriggerBufferXRay",
             "enabled": true
         },
         {
@@ -906,6 +936,11 @@
         {
             "id": 166,
             "name": "canUpwardGModeSetup",
+            "enabled": true
+        },
+        {
+            "id": 218,
+            "name": "canBlueSuitGModeSetup",
             "enabled": true
         },
         {
@@ -974,6 +1009,16 @@
             "enabled": true
         },
         {
+            "id": 222,
+            "name": "canRModePauseAbuseSparkInterrupt",
+            "enabled": true
+        },
+        {
+            "id": 224,
+            "name": "canDoubleXModeBlueSuit",
+            "enabled": true
+        },
+        {
             "id": 149,
             "name": "canPauseRemorphTemporaryBlue",
             "enabled": true
@@ -1039,8 +1084,18 @@
             "enabled": true
         },
         {
+            "id": 160,
+            "name": "canSuperJump",
+            "enabled": true
+        },
+        {
             "id": 148,
             "name": "canLongChainTemporaryBlue",
+            "enabled": true
+        },
+        {
+            "id": 225,
+            "name": "canSlopeXMode",
             "enabled": true
         },
         {
@@ -1101,6 +1156,11 @@
         {
             "id": 213,
             "name": "canRModeKnockbackSpark",
+            "enabled": false
+        },
+        {
+            "id": 220,
+            "name": "canRightSideDashlessDoorStuck",
             "enabled": false
         },
         {
