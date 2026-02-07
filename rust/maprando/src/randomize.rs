@@ -141,7 +141,7 @@ impl DifficultyConfig {
                 "n_jumpIntoCrystalFlashLenience",
                 skill.jump_into_cf_leniency,
             ),
-            ("n_CrystalSparkLenience", 8), // TODO: add skill setting for this
+            ("n_CrystalSparkLenience", skill.crystal_spark_leniency), // TODO: add skill setting for this
             ("n_elevatorCrystalFlashLenience", skill.elevator_cf_leniency),
         ];
         for (name, value) in numeric_overrides {

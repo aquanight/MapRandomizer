@@ -45,6 +45,7 @@ pub struct SkillAssumptionSettings {
     pub spike_xmode_leniency: i32,
     pub spike_speed_keep_leniency: i32,
     pub elevator_cf_leniency: i32,
+    pub crystal_spark_leniency: i32,
     pub phantoon_proficiency: f32,
     pub draygon_proficiency: f32,
     pub ridley_proficiency: f32,
@@ -700,6 +701,9 @@ fn upgrade_other_skill_settings(settings: &mut serde_json::Value) -> Result<()> 
     }
     if !skill_assumption_settings.contains_key("elevator_cf_leniency") {
         skill_assumption_settings.insert("elevator_cf_leniency".to_string(), 8.into());
+    }
+    if !skill_assumption_settings.contains_key("crystal_spark_leniency") {
+        skill_assumption_settings.insert("crystal_spark_leniency".to_string(), 8.into());
     }
 
     Ok(())

@@ -16,6 +16,7 @@
     "spike_xmode_leniency": 0,
     "spike_speed_keep_leniency": 1,
     "elevator_cf_leniency": 4,
+    "crystal_spark_leniency": 2,
     "phantoon_proficiency": 1,
     "draygon_proficiency": 1,
     "ridley_proficiency": 1,

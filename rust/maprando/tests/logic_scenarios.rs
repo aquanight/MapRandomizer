@@ -155,6 +155,7 @@ fn get_settings(scenario: &Scenario) -> Result<RandomizerSettings> {
             elevator_cf_leniency: 0,
             spike_xmode_leniency: 0,
             spike_speed_keep_leniency: 0,
+            crystal_spark_leniency: 0,
             phantoon_proficiency: 1.0,
             draygon_proficiency: 1.0,
             ridley_proficiency: 1.0,
