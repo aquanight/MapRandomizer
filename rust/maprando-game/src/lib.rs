@@ -3137,6 +3137,7 @@ impl GameData {
                         "notable": false,
                         "requires": ["f_DefeatedSporeSpawn"],
                         "flashSuitChecked": true,
+                        "blueSuitChecked": true,
                       }
                     ]
                   }
@@ -3223,6 +3224,7 @@ impl GameData {
                             ]}
                         ],
                         "flashSuitChecked": true,
+                        "blueSuitChecked": true,
                       }
                     ],
                     "yields": ["f_ZebesAwake", "f_ClearedMetalPiratesRoom"]
@@ -3502,6 +3504,7 @@ impl GameData {
                     "requires": [],
                     "unlocksDoors": self.get_default_unlocks_door(room_json, node_id, node_id)?,
                     "flashSuitChecked": true,
+                    "blueSuitChecked": true,
                 });
             }
             if (node_type == "door" || node_type == "entrance")
@@ -3516,6 +3519,7 @@ impl GameData {
                     },
                     "requires": [],
                     "flashSuitChecked": true,
+                    "blueSuitChecked": true,
                 });
             }
 
@@ -3543,6 +3547,7 @@ impl GameData {
                     },
                     "requires": req,
                     "flashSuitChecked": true,
+                    "blueSuitChecked": true,
                 });
             }
 
@@ -3560,7 +3565,8 @@ impl GameData {
                         }
                     },
                     "requires": [],
-                    "flashSuitChecked": true
+                    "flashSuitChecked": true,
+                    "blueSuitChecked": true,
                 });
             }
 
@@ -3574,7 +3580,8 @@ impl GameData {
                           "name": "Base (Collect Item)",
                           "notable": false,
                           "requires": [],
-                          "flashSuitChecked": true
+                          "flashSuitChecked": true,
+                          "blueSuitChecked": true,
                         }
                       ]
                     }
@@ -3611,7 +3618,8 @@ impl GameData {
                                     ]
                                 }},
                             ],
-                            "flashSuitChecked": true
+                            "flashSuitChecked": true,
+                            "blueSuitChecked": true,
                         }
                     ];
                 }
