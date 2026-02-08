@@ -975,6 +975,7 @@ pub fn get_spoiler_log(
     save_animals: SaveAnimals,
     start_location_data: &StartLocationData,
     tolerate_escape_failure: bool,
+    rebuild_traversals: bool,
 ) -> Result<SpoilerLog> {
     let forward_traversal = get_spoiler_traversal(&traverser_pair.forward);
     let reverse_traversal = get_spoiler_traversal(&traverser_pair.reverse);
@@ -1015,8 +1016,10 @@ pub fn get_spoiler_log(
                 .clone();
 
             // Rebuild the traversal step to make the spoiler routes cleaner, by using shorter paths.
-            randomizer.rebuild_step(state, &mut traverser_pair.forward);
-            randomizer.rebuild_step(state, &mut traverser_pair.reverse);
+            if rebuild_traversals {
+                randomizer.rebuild_step(state, &mut traverser_pair.forward);
+                randomizer.rebuild_step(state, &mut traverser_pair.reverse);
+            }
 
             let forward_trails_by_vertex = get_step_trails_by_vertex(&traverser_pair.forward);
             let reverse_trails_by_vertex = get_step_trails_by_vertex(&traverser_pair.reverse);

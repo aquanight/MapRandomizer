@@ -4639,6 +4639,7 @@ impl<'r> Randomizer<'r> {
         traverser_pair: &mut TraverserPair,
         start_location_data: &StartLocationData,
         tolerate_escape_failure: bool,
+        rebuild_traversals: bool,
     ) -> Result<(Randomization, SpoilerLog)> {
         let save_animals = if self.settings.save_animals == SaveAnimals::Random {
             if rng.gen_bool(0.5) {
@@ -4657,6 +4658,7 @@ impl<'r> Randomizer<'r> {
             save_animals,
             start_location_data,
             tolerate_escape_failure,
+            rebuild_traversals,
         )?;
 
         let item_placement: Vec<Item> = state
@@ -5193,6 +5195,7 @@ impl<'r> Randomizer<'r> {
         attempt_num_rando: usize,
         seed: usize,
         display_seed: usize,
+        rebuild_traversals: bool,
     ) -> Result<(Randomization, SpoilerLog)> {
         let mut rng_seed = [0u8; 32];
         rng_seed[..8].copy_from_slice(&seed.to_le_bytes());
@@ -5433,6 +5436,7 @@ impl<'r> Randomizer<'r> {
             &mut traverser_pair,
             &start_location_data,
             false,
+            rebuild_traversals,
         )
     }
 }
