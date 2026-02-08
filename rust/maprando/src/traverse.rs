@@ -103,7 +103,7 @@ fn apply_enemy_kill_requirement(
 #[derive(Clone)]
 pub struct CostConfig {}
 
-pub const NUM_COST_METRICS: usize = 4;
+pub const NUM_COST_METRICS: usize = 5;
 type CostValue = i32;
 
 fn compute_cost(
@@ -169,16 +169,22 @@ fn compute_cost(
         + 100000 * shinecharge_cost
         + blue_suit_cost
         + cycle_frames_cost;
-    let blue_suit_sensitive_cost_metric = total_energy_cost
+    let blue_suit_energy_sensitive_cost_metric = 2000 * total_energy_cost
         + total_ammo_cost
         + shinecharge_cost
-        + 100000 * blue_suit_cost
+        + 5000000 * blue_suit_cost
+        + cycle_frames_cost;
+    let blue_suit_ammo_sensitive_cost_metric = total_energy_cost
+        + 2000 * total_ammo_cost
+        + shinecharge_cost
+        + 5000000 * blue_suit_cost
         + cycle_frames_cost;
     [
         energy_sensitive_cost_metric,
         ammo_sensitive_cost_metric,
         shinecharge_sensitive_cost_metric,
-        blue_suit_sensitive_cost_metric,
+        blue_suit_energy_sensitive_cost_metric,
+        blue_suit_ammo_sensitive_cost_metric,
     ]
 }
 
