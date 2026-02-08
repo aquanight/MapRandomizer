@@ -3451,24 +3451,33 @@ impl GameData {
 
         // Flags for which we want to add an obstacle in the room, to allow progression through (or back out of) the room
         // after setting the flag on the same graph traversal step (which cannot take into account the new flag).
-        let obstacle_flag_map: HashMap<RoomId, String> = vec![
-            (84, "f_DefeatedKraid"),
-            (193, "f_DefeatedDraygon"),
-            (142, "f_DefeatedRidley"),
-            (150, "f_DefeatedGoldenTorizo"),
-            (122, "f_DefeatedCrocomire"),
-            (57, "f_DefeatedSporeSpawn"),
-            (185, "f_DefeatedBotwoon"),
-            (170, "f_MaridiaTubeBroken"),
-            (222, "f_ShaktoolDoneDigging"),
-            (149, "f_UsedAcidChozoStatue"),
-            (226, "f_KilledMetroidRoom1"),
-            (227, "f_KilledMetroidRoom2"),
-            (228, "f_KilledMetroidRoom3"),
-            (229, "f_KilledMetroidRoom4"),
+        let obstacle_flag_map: HashMap<RoomId, Vec<String>> = vec![
+            (84, vec!["f_DefeatedKraid"]),
+            (193, vec!["f_DefeatedDraygon"]),
+            (142, vec!["f_DefeatedRidley"]),
+            (150, vec!["f_DefeatedGoldenTorizo"]),
+            (122, vec!["f_DefeatedCrocomire"]),
+            (57, vec!["f_DefeatedSporeSpawn"]),
+            (185, vec!["f_DefeatedBotwoon"]),
+            (170, vec!["f_MaridiaTubeBroken"]),
+            (222, vec!["f_ShaktoolDoneDigging"]),
+            (149, vec!["f_UsedAcidChozoStatue"]),
+            (226, vec!["f_KilledMetroidRoom1"]),
+            (227, vec!["f_KilledMetroidRoom2"]),
+            (228, vec!["f_KilledMetroidRoom3"]),
+            (229, vec!["f_KilledMetroidRoom4"]),
+            (
+                238,
+                vec![
+                    "f_KilledZebetites1",
+                    "f_KilledZebetites2",
+                    "f_KilledZebetites3",
+                    "f_KilledZebetites4",
+                ],
+            ),
         ]
         .into_iter()
-        .map(|(x, y)| (x, y.to_string()))
+        .map(|(x, y)| (x, y.into_iter().map(|s| s.to_string()).collect()))
         .collect();
 
         match room_id {
@@ -3677,36 +3686,41 @@ impl GameData {
             new_room_json["strats"].push(strat).unwrap();
         }
 
-        if let Some(obstacle_flag) = obstacle_flag_map.get(&room_id) {
-            extra_obstacles.push(obstacle_flag.clone());
-            ensure!(new_room_json["strats"].is_array());
+        if let Some(obstacle_flag_vec) = obstacle_flag_map.get(&room_id) {
+            for obstacle_flag in obstacle_flag_vec {
+                extra_obstacles.push(obstacle_flag.clone());
+                ensure!(new_room_json["strats"].is_array());
 
-            // For each strat requiring one of the "obstacle flags" listed above, modify the strat to include
-            // a possibility depending on the obstacle instead:
-            // e.g., "f_DefeatedKraid" becomes {"or": ["f_DefeatedKraid", {"obstaclesCleared": ["f_DefeatedKraid"]}]}
-            for strat in new_room_json["strats"].members_mut() {
-                Self::replace_obstacle_flag(&mut strat["requires"], obstacle_flag);
-                if strat.has_key("unlocksDoors") {
-                    for unlock in strat["unlocksDoors"].members_mut() {
-                        Self::replace_obstacle_flag(&mut unlock["requires"], obstacle_flag);
+                // For each strat requiring one of the "obstacle flags" listed above, modify the strat to include
+                // a possibility depending on the obstacle instead:
+                // e.g., "f_DefeatedKraid" becomes {"or": ["f_DefeatedKraid", {"obstaclesCleared": ["f_DefeatedKraid"]}]}
+                for strat in new_room_json["strats"].members_mut() {
+                    Self::replace_obstacle_flag(&mut strat["requires"], obstacle_flag);
+                    if strat.has_key("unlocksDoors") {
+                        for unlock in strat["unlocksDoors"].members_mut() {
+                            Self::replace_obstacle_flag(&mut unlock["requires"], obstacle_flag);
+                        }
+                    }
+                    let has_flag = strat["setsFlags"]
+                        .members()
+                        .any(|x| x.as_str().unwrap() == obstacle_flag);
+                    if has_flag {
+                        if !strat.has_key("clearsObstacles") {
+                            strat["clearsObstacles"] = json::array![];
+                        }
+                        strat["clearsObstacles"].push(obstacle_flag.clone())?;
                     }
                 }
-                let has_flag = strat["setsFlags"]
-                    .members()
-                    .any(|x| x.as_str().unwrap() == obstacle_flag);
-                if has_flag {
-                    if !strat.has_key("clearsObstacles") {
-                        strat["clearsObstacles"] = json::array![];
-                    }
-                    strat["clearsObstacles"].push(obstacle_flag.clone())?;
-                }
-            }
 
-            for node_json in new_room_json["nodes"].members_mut() {
-                if node_json.has_key("locks") {
-                    for lock_json in node_json["locks"].members_mut() {
-                        for strat_json in lock_json["unlockStrats"].members_mut() {
-                            Self::replace_obstacle_flag(&mut strat_json["requires"], obstacle_flag);
+                for node_json in new_room_json["nodes"].members_mut() {
+                    if node_json.has_key("locks") {
+                        for lock_json in node_json["locks"].members_mut() {
+                            for strat_json in lock_json["unlockStrats"].members_mut() {
+                                Self::replace_obstacle_flag(
+                                    &mut strat_json["requires"],
+                                    obstacle_flag,
+                                );
+                            }
                         }
                     }
                 }

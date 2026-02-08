@@ -4382,9 +4382,19 @@ impl<'r> Randomizer<'r> {
                 {
                     // f_DefeatedMotherBrain flag is special in that we only require one-way reachability for it:
                     any_update = true;
+                    debug!(
+                        "Traversal {}, flag reachable: {}",
+                        traverser_pair.forward.past_steps.len(),
+                        self.game_data.flag_isv.keys[flag_id]
+                    );
                     state.global_state.flags[flag_id] = true;
                 } else if state.flag_location_state[i].bireachable_traversal.is_some() {
                     any_update = true;
+                    debug!(
+                        "Traversal {}, flag bireachable: {}",
+                        traverser_pair.forward.past_steps.len(),
+                        self.game_data.flag_isv.keys[flag_id]
+                    );
                     state.global_state.flags[flag_id] = true;
                 }
             }
