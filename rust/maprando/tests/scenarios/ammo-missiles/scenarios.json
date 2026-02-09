@@ -2,78 +2,64 @@
   "$schema": "../../schema/scenarios.schema.json",
   "scenarios": [
     {
-      "name": "Not Enough Supers",
+      "name": "Not Enough Missiles",
       "globalState": {
-        "maxSupers": 50
+        "maxMissiles": 50
       },
       "startRoomId": 0,
       "startNodeId": 1,
       "startState": {
-        "supers": {"remaining": 9}
+        "missiles": {"remaining": 9}
       },
       "endRoomId": 0,
       "endNodeId": 2,
       "fail": true
     },
     {
-      "name": "Not Enough Supers (Consumed)",
+      "name": "Not Enough Missiles (Consumed)",
       "globalState": {
-        "maxSupers": 50
+        "maxMissiles": 50
       },
       "startRoomId": 0,
       "startNodeId": 1,
       "startState": {
-        "supers": {"consumed": 41}
+        "missiles": {"consumed": 41}
       },
       "endRoomId": 0,
       "endNodeId": 2,
       "fail": true
     },
     {
-      "name": "Enough Supers",
+      "name": "Enough Missiles",
       "globalState": {
-        "maxSupers": 50
+        "maxMissiles": 50
       },
       "startRoomId": 0,
       "startNodeId": 1,
       "startState": {
-        "supers": {"remaining": 10}
+        "missiles": {"remaining": 10}
       },
       "endRoomId": 0,
       "endNodeId": 2,
       "endState": {
-        "supers": {"remaining": 10}
+        "missiles": {"remaining": 0}
       }
     },
     {
-      "name": "Enough Supers (Consumed)",
+      "name": "Enough Missiles (Consumed)",
       "globalState": {
-        "maxSupers": 50
+        "maxMissiles": 50
       },
       "startRoomId": 0,
       "startNodeId": 1,
       "startState": {
-        "supers": {"consumed": 40}
+        "missiles": {"consumed": 40}
       },
       "endRoomId": 0,
       "endNodeId": 2,
       "endState": {
-        "supers": {"consumed": 40}
+        "missiles": {"consumed": 50}
       }
-    },
-    {
-      "name": "Reverse",
-      "globalState": {
-        "maxSupers": 50
-      },
-      "startRoomId": 0,
-      "startNodeId": 1,
-      "startState": {
-        "supers": {"remaining": 10}
-      },
-      "endRoomId": 0,
-      "endNodeId": 2,
-      "forward": "weak"
     }
   ]
 }

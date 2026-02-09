@@ -1658,7 +1658,7 @@ fn apply_requirement_simple(
             let limit = limit.resolve(&cx.difficulty.numerics);
             let energy_remaining = local.energy_remaining(&cx.global.inventory, false);
             if limit >= cx.global.pool_inventory.max_energy {
-                local.energy = ResourceLevel::full(cx.reverse).into();
+                local.energy = ResourceLevel::full_energy(cx.reverse).into();
                 local.farm_baseline_energy = local.energy;
             } else if cx.reverse {
                 if energy_remaining <= limit {
