@@ -391,6 +391,14 @@ impl LocalState {
         }
     }
 
+    pub fn blue_suit_available(&self, blue_suit_distance: u8, reverse: bool) -> u8 {
+        if reverse {
+            blue_suit_distance - self.blue_suit
+        } else {
+            self.blue_suit
+        }
+    }
+
     pub fn farm_baseline_energy_remaining(
         &self,
         inventory: &Inventory,

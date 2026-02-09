@@ -127,6 +127,7 @@ struct ScenarioState {
     power_bombs: Option<ResourceLevel>,
     shinecharge_frames_remaining: Option<Capacity>,
     flash_suit: Option<u8>,
+    blue_suit: Option<u8>,
 }
 
 fn get_settings(scenario: &Scenario) -> Result<RandomizerSettings> {
@@ -467,6 +468,9 @@ fn get_local_state(state_opt: &Option<ScenarioState>) -> LocalState {
     if let Some(flash_suit) = state.flash_suit {
         local.flash_suit = flash_suit;
     }
+    if let Some(blue_suit) = state.blue_suit {
+        local.blue_suit = blue_suit;
+    }
     local
 }
 
@@ -635,6 +639,7 @@ fn test_scenario(
     }
     let skill = &settings.skill_assumption_settings;
     let flash_suit_distance = skill.flash_suit_distance;
+    let blue_suit_distance = skill.blue_suit_distance;
 
     for reverse in [false, true] {
         println!("reverse: {}", reverse);
@@ -737,6 +742,10 @@ fn test_scenario(
                 >= final_local_state.flash_suit_available(flash_suit_distance, reverse);
             let flash_suit_exact = local.flash_suit_available(flash_suit_distance, reverse)
                 == final_local_state.flash_suit_available(flash_suit_distance, reverse);
+            let blue_suit_pass = local.blue_suit_available(blue_suit_distance, reverse)
+                >= final_local_state.blue_suit_available(blue_suit_distance, reverse);
+            let blue_suit_exact = local.blue_suit_available(blue_suit_distance, reverse)
+                == final_local_state.blue_suit_available(blue_suit_distance, reverse);
             if energy_pass
                 && reserves_pass
                 && missiles_pass
@@ -744,6 +753,7 @@ fn test_scenario(
                 && power_bombs_pass
                 && shinecharge_frames_pass
                 && flash_suit_pass
+                && blue_suit_pass
             {
                 success = true;
             }
@@ -754,6 +764,7 @@ fn test_scenario(
                 && power_bombs_exact
                 && shinecharge_frames_exact
                 && flash_suit_exact
+                && blue_suit_exact
             {
                 exact_success = true;
             }
