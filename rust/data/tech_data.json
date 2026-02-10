@@ -864,6 +864,12 @@
         "video_id": 929
     },
     {
+        "tech_id": 10001,
+        "name": "canHyperGateShot",
+        "difficulty": "Hard",
+        "video_id": 3140
+    },
+    {
         "tech_id": 211,
         "name": "canDash",
         "difficulty": "Implicit",

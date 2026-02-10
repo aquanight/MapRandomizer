@@ -280,6 +280,11 @@
             "enabled": false
         },
         {
+            "id": 10001,
+            "name": "canHyperGateShot",
+            "enabled": false
+        },
+        {
             "id": 134,
             "name": "canMidairShinespark",
             "enabled": false
