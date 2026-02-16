@@ -36,7 +36,8 @@
       "requires": [
         {"getBlueSpeed": {"usedTiles": 15, "openEnd": 1}}
       ],
-      "flashSuitChecked": true
+      "flashSuitChecked": true,
+      "blueSuitChecked": true
     }
   ]
 }

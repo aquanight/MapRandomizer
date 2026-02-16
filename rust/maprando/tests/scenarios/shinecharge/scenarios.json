@@ -3,9 +3,6 @@
   "scenarios": [
     {
       "name": "Shinecharge (Speed Booster)",
-      "settings": {
-        "shinechargeTiles": 15
-      },
       "globalState": {
         "items": ["SpeedBooster"]
       },
@@ -16,9 +13,6 @@
     },
     {
       "name": "Shinecharge (Spark Booster)",
-      "settings": {
-        "shinechargeTiles": 15
-      },
       "globalState": {
         "items": ["SparkBooster"]
       },
@@ -29,9 +23,6 @@
     },
     {
       "name": "Fail (Blue Booster)",
-      "settings": {
-        "shinechargeTiles": 15
-      },
       "globalState": {
         "items": ["BlueBooster"]
       },
@@ -43,9 +34,6 @@
     },
     {
       "name": "Fail (No Booster)",
-      "settings": {
-        "shinechargeTiles": 15
-      },
       "startRoomId": 0,
       "startNodeId": 1,
       "endRoomId": 0,
@@ -53,7 +41,7 @@
       "fail": true
     },
     {
-      "name": "Runway Too Short",
+      "name": "Fail: Runway Too Short",
       "settings": {
         "shinechargeTiles": 16
       },
@@ -67,10 +55,7 @@
       "fail": true
     },
     {
-      "name": "Cannot Carry Flash Suit",
-      "settings": {
-        "shinechargeTiles": 15
-      },
+      "name": "Fail: Cannot Carry Flash Suit",
       "globalState": {
         "items": ["SpeedBooster"]
       },
@@ -88,9 +73,6 @@
     },
     {
       "name": "Lose Flash Suit",
-      "settings": {
-        "shinechargeTiles": 15
-      },
       "globalState": {
         "items": ["SpeedBooster"]
       },
@@ -103,6 +85,40 @@
       "endNodeId": 2,
       "endState": {
         "flashSuit": 0
+      },
+      "reverse": "weak"
+    },
+    {
+      "name": "Fail: Cannot Carry Blue Suit",
+      "globalState": {
+        "items": ["SpeedBooster"]
+      },
+      "startRoomId": 0,
+      "startNodeId": 1,
+      "startState": {
+        "blueSuit": 1
+      },
+      "endRoomId": 0,
+      "endNodeId": 2,
+      "endState": {
+        "blueSuit": 1
+      },
+      "fail": true
+    },
+    {
+      "name": "Lose Blue Suit",
+      "globalState": {
+        "items": ["SpeedBooster"]
+      },
+      "startRoomId": 0,
+      "startNodeId": 1,
+      "startState": {
+        "blueSuit": 1
+      },
+      "endRoomId": 0,
+      "endNodeId": 2,
+      "endState": {
+        "blueSuit": 0
       },
       "reverse": "weak"
     }

@@ -1945,6 +1945,13 @@ fn apply_requirement_simple(
             {
                 return SimpleResult::Failure;
             }
+            if cx.reverse {
+                if local.blue_suit > 0 {
+                    return SimpleResult::Failure;
+                }
+            } else {
+                local.blue_suit = 0;
+            }
             SimpleResult::Success
         }
         Requirement::ShineCharge { used_tiles, heated } => {

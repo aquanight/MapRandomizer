@@ -2,10 +2,7 @@
   "$schema": "../../schema/scenarios.schema.json",
   "scenarios": [
     {
-      "name": "Get Blue Speed",
-      "settings": {
-        "shinechargeTiles": 15
-      },
+      "name": "Get Blue Speed (Speed Booster)",
       "globalState": {
         "items": ["SpeedBooster"]
       },
@@ -15,7 +12,27 @@
       "endNodeId": 2
     },
     {
-      "name": "Missing Speed Booster",
+      "name": "Get Blue Speed (Blue Booster)",
+      "globalState": {
+        "items": ["BlueBooster"]
+      },
+      "startRoomId": 0,
+      "startNodeId": 1,
+      "endRoomId": 0,
+      "endNodeId": 2
+    },
+    {
+      "name": "Get Blue Speed (Spark Booster)",
+      "globalState": {
+        "items": ["SparkBooster"]
+      },
+      "startRoomId": 0,
+      "startNodeId": 1,
+      "endRoomId": 0,
+      "endNodeId": 2
+    },
+    {
+      "name": "Fail: No Booster",
       "settings": {
         "shinechargeTiles": 15
       },
@@ -26,7 +43,7 @@
       "fail": true
     },
     {
-      "name": "Runway Too Short",
+      "name": "Fail: Runway Too Short",
       "settings": {
         "shinechargeTiles": 16
       },
@@ -41,9 +58,6 @@
     },
     {
       "name": "Carry Flash Suit",
-       "settings": {
-        "shinechargeTiles": 15
-      },
       "globalState": {
         "items": ["SpeedBooster"]
       },
@@ -57,6 +71,40 @@
       "endState": {
         "flashSuit": 1
       }
+    },
+    {
+      "name": "Fail: Cannot Carry Blue Suit",
+      "globalState": {
+        "items": ["SpeedBooster"]
+      },
+      "startRoomId": 0,
+      "startNodeId": 1,
+      "startState": {
+        "blueSuit": 1
+      },
+      "endRoomId": 0,
+      "endNodeId": 2,
+      "endState": {
+        "blueSuit": 1
+      },
+      "fail": true
+    },
+    {
+      "name": "Lose Blue Suit",
+      "globalState": {
+        "items": ["SpeedBooster"]
+      },
+      "startRoomId": 0,
+      "startNodeId": 1,
+      "startState": {
+        "blueSuit": 1
+      },
+      "endRoomId": 0,
+      "endNodeId": 2,
+      "endState": {
+        "blueSuit": 0
+      },
+      "reverse": "weak"
     }
   ]
 }
