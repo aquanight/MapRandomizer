@@ -2202,6 +2202,13 @@ impl Patcher<'_> {
             {
                 continue;
             }
+            // Skip SpeedBooster / Split SpeedBooster if options dont match.
+            match (x.item, self.settings.other_settings.speed_booster) {
+                (Item::SpeedBooster, SpeedBooster::Split) => continue,
+                (Item::BlueBooster, SpeedBooster::Vanilla) => continue,
+                (Item::SparkBooster, SpeedBooster::Vanilla) => continue,
+                _ => {}
+            }
             if x.count == 0 {
                 continue;
             }
