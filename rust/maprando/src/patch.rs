@@ -2134,6 +2134,14 @@ impl Patcher<'_> {
                         count: 1,
                     },
                     ItemCount {
+                        item: Item::BlueBooster,
+                        count: 1,
+                    },
+                    ItemCount {
+                        item: Item::SparkBooster,
+                        count: 1,
+                    },
+                    ItemCount {
                         item: Item::Wave,
                         count: 1,
                     },
