@@ -1,3 +1,4 @@
+$95: temporary variable (unused debug location) - used by extended messageboxes, safe to use outside message boxes.
 $9B: decompression.asm
 $09EC: number of disabled ETanks (saved to SRAM)
 $0A1A: previous reserve health (reserve_hud.asm)

@@ -7,8 +7,8 @@ use crate::patch::map_tiles::get_objective_tiles;
 use crate::settings::{
     AreaAssignmentBaseOrder, DoorsMode, FillerItemPriority, ItemPlacementStyle,
     ItemPriorityStrength, KeyItemPriority, MotherBrainFight, Objective, ObjectiveSetting,
-    ProgressionRate, RandomizerSettings, SaveAnimals, SkillAssumptionSettings, StartLocationMode,
-    WallJump,
+    ProgressionRate, RandomizerSettings, SaveAnimals, SkillAssumptionSettings, SpeedBooster,
+    StartLocationMode, WallJump,
 };
 use crate::spoiler_log::{
     SpoilerLocalState, SpoilerLog, SpoilerRoomLoc, SpoilerRouteEntry, SpoilerStartLocation,
@@ -1106,7 +1106,7 @@ impl<'a> Preprocessor<'a> {
                     reqs.push(Requirement::NoBlueSuit);
                 }
                 if speed_booster == Some(true) {
-                    reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                    reqs.push(Requirement::any_booster());
                 }
                 if speed_booster == Some(false) {
                     reqs.push(Requirement::Tech(
@@ -1164,7 +1164,7 @@ impl<'a> Preprocessor<'a> {
                 reqs.push(Requirement::Item(Item::SpaceJump as ItemId));
                 reqs.push(Requirement::NoBlueSuit);
                 if speed_booster == Some(true) {
-                    reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                    reqs.push(Requirement::blue_booster());
                 }
                 if speed_booster == Some(false) {
                     reqs.push(Requirement::Tech(
@@ -1497,8 +1497,8 @@ impl<'a> Preprocessor<'a> {
                 let mut reqs: Vec<Requirement> = vec![
                     Requirement::NoBlueSuit,
                     Requirement::Tech(self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPEEDBALL]),
-                    Requirement::Item(self.game_data.item_isv.index_by_key["Morph"]),
-                    Requirement::Item(self.game_data.item_isv.index_by_key["SpeedBooster"]),
+                    Requirement::Item(Item::Morph as ItemId),
+                    Requirement::blue_booster(),
                 ];
                 if !self.add_run_speed_reqs(
                     remote_runway_length,
@@ -1759,7 +1759,7 @@ impl<'a> Preprocessor<'a> {
         let mut reqs: Vec<Requirement> = vec![];
         reqs.push(Requirement::NoBlueSuit);
         if speed_booster == Some(true) {
-            reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+            reqs.push(Requirement::blue_booster());
         }
         if speed_booster == Some(false) {
             reqs.push(Requirement::Tech(
@@ -1836,7 +1836,7 @@ impl<'a> Preprocessor<'a> {
         let mut reqs: Vec<Requirement> = vec![];
         reqs.push(Requirement::NoBlueSuit);
         if speed_booster == Some(true) {
-            reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+            reqs.push(Requirement::blue_booster());
         }
         if speed_booster == Some(false) {
             reqs.push(Requirement::Tech(
@@ -2004,7 +2004,7 @@ impl<'a> Preprocessor<'a> {
                 reqs.push(Requirement::Tech(
                     self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPRING_BALL_BOUNCE],
                 ));
-                reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                reqs.push(Requirement::blue_booster());
                 reqs.push(Requirement::Item(Item::Morph as ItemId));
                 reqs.push(Requirement::Item(Item::SpringBall as ItemId));
                 Some(Requirement::make_and(reqs))
@@ -2057,7 +2057,7 @@ impl<'a> Preprocessor<'a> {
                 reqs.push(Requirement::Tech(
                     self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPRING_BALL_BOUNCE],
                 ));
-                reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                reqs.push(Requirement::blue_booster());
                 reqs.push(Requirement::Item(Item::Morph as ItemId));
                 reqs.push(Requirement::Item(Item::SpringBall as ItemId));
                 Some(Requirement::make_and(reqs))
@@ -2105,7 +2105,7 @@ impl<'a> Preprocessor<'a> {
                 reqs.push(Requirement::Tech(
                     self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_SPRING_BALL_BOUNCE],
                 ));
-                reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                reqs.push(Requirement::blue_booster());
                 reqs.push(Requirement::Item(Item::Morph as ItemId));
                 reqs.push(Requirement::Item(Item::SpringBall as ItemId));
                 Some(Requirement::make_and(reqs))
@@ -2245,7 +2245,7 @@ impl<'a> Preprocessor<'a> {
                 reqs.push(Requirement::Tech(
                     self.game_data.tech_isv.index_by_key[&TECH_ID_CAN_STUTTER_WATER_SHINECHARGE],
                 ));
-                reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                reqs.push(Requirement::any_booster());
                 reqs.push(Requirement::NoBlueSuit);
                 if include_shinecharge {
                     reqs.push(Requirement::ShineCharge {
@@ -2753,7 +2753,7 @@ impl<'a> Preprocessor<'a> {
                         continue;
                     }
                     if p.speed_booster == Some(true) {
-                        reqs.push(Requirement::Item(Item::SpeedBooster as ItemId));
+                        reqs.push(Requirement::blue_booster());
                     }
                     if p.speed_booster == Some(false) {
                         reqs.push(Requirement::Tech(
@@ -3459,6 +3459,16 @@ impl<'r> Randomizer<'r> {
         }
         if settings.other_settings.wall_jump == WallJump::Vanilla {
             initial_items_remaining[Item::WallJump as usize] = 0;
+        }
+
+        match settings.other_settings.speed_booster {
+            SpeedBooster::Vanilla => {
+                initial_items_remaining[Item::SparkBooster as usize] = 0;
+                initial_items_remaining[Item::BlueBooster as usize] = 0;
+            }
+            SpeedBooster::Split => {
+                initial_items_remaining[Item::SpeedBooster as usize] = 0;
+            }
         }
 
         let mut minimal_tank_count = get_minimal_tank_count(&difficulty_tiers[0]);
@@ -4563,6 +4573,12 @@ impl<'r> Randomizer<'r> {
             if settings.other_settings.wall_jump != WallJump::Collectible && name == "WallJump" {
                 // Don't show "WallJump" item unless using Collectible mode.
                 continue;
+            }
+
+            match (settings.other_settings.speed_booster, name) {
+                (SpeedBooster::Vanilla, "BlueBooster" | "SparkBooster") => continue,
+                (SpeedBooster::Split, "SpeedBooster") => continue,
+                _ => {}
             }
             let item = Item::try_from(name).unwrap();
             if !items_set.contains(&item) {

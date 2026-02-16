@@ -353,6 +353,7 @@ pub struct OtherSettings {
     pub disable_spikesuit: bool,
     pub disable_bluesuit: bool,
     pub enable_major_glitches: bool,
+    pub speed_booster: SpeedBooster,
     pub race_mode: bool,
     pub random_seed: Option<usize>,
 }
@@ -501,6 +502,12 @@ impl AreaAssignment {
 pub enum WallJump {
     Vanilla,
     Collectible,
+}
+
+#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq)]
+pub enum SpeedBooster {
+    Vanilla,
+    Split,
 }
 
 #[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq)]
@@ -930,6 +937,10 @@ fn upgrade_other_settings(settings: &mut serde_json::Value) -> Result<()> {
 
     if other_settings.get("enable_major_glitches").is_none() {
         other_settings.insert("enable_major_glitches".to_string(), false.into());
+    }
+
+    if other_settings.get("speed_booster").is_none() {
+        other_settings.insert("speed_booster".to_string(), "Vanilla".into());
     }
 
     Ok(())

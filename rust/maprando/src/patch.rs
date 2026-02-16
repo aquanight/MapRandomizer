@@ -19,7 +19,8 @@ use crate::{
     randomize::{LockedDoor, Randomization},
     settings::{
         AreaAssignmentPreset, ETankRefill, Fanfares, ItemCount, MotherBrainFight, Objective,
-        ObjectiveScreen, RandomizerSettings, SaveAnimals, StartLocationMode, WallJump,
+        ObjectiveScreen, RandomizerSettings, SaveAnimals, SpeedBooster, StartLocationMode,
+        WallJump,
     },
 };
 use anyhow::{Context, Result, bail, ensure};
@@ -260,7 +261,7 @@ fn item_to_plm_type(item: Item, orig_plm_type: isize) -> isize {
     // Item container: 0 = none, 1 = chozo orb, 2 = shot block (scenery)
     let item_container = (orig_plm_type - 0xEED7) / 84;
 
-    let plm_table: [[isize; 23]; 3] = [
+    let plm_table: [[isize; 25]; 3] = [
         [
             0xEED7, // Energy tank
             0xEEDB, // Missile tank
@@ -285,6 +286,8 @@ fn item_to_plm_type(item: Item, orig_plm_type: isize) -> isize {
             0xEF27, // Reserve tank
             0xF000, // Wall-jump boots
             0xEEDB, // Missile tank (nothing)
+            0xF0E2, // Spark Booster
+            0xF0EE, // Blue Booster
         ],
         [
             0xEF2B, // Energy tank, chozo orb
@@ -310,6 +313,8 @@ fn item_to_plm_type(item: Item, orig_plm_type: isize) -> isize {
             0xEF7B, // Reserve tank, chozo orb
             0xF004, // Wall-jump boots, chozo orb
             0xEF2F, // Missile tank (nothing)
+            0xF0E6, // Spark Booster, chozo orb
+            0xF0F2, // Blue Booster, chozo orb
         ],
         [
             0xEF7F, // Energy tank, shot block
@@ -335,6 +340,8 @@ fn item_to_plm_type(item: Item, orig_plm_type: isize) -> isize {
             0xEFCF, // Reserve tank, shot block
             0xF008, // Wall-jump boots, shot block
             0xEF83, // Missile tank (nothing)
+            0xF0EA, // Spark Booster, shot block
+            0xF0F6, // Blue Booster, shot block
         ],
     ];
 
@@ -538,8 +545,22 @@ impl Patcher<'_> {
         match self.settings.other_settings.wall_jump {
             WallJump::Vanilla => {}
             WallJump::Collectible => {
-                patches.push("walljump_item");
+                patches.push("walljump_plm");
             }
+        }
+
+        match self.settings.other_settings.speed_booster {
+            SpeedBooster::Vanilla => {}
+            SpeedBooster::Split => {
+                patches.push("split_speed_plm");
+                patches.push("split_speed");
+            }
+        }
+
+        if self.settings.other_settings.wall_jump == WallJump::Collectible
+            || self.settings.other_settings.speed_booster == SpeedBooster::Split
+        {
+            patches.push("extended_msg_boxes");
         }
 
         match self.settings.quality_of_life_settings.etank_refill {
@@ -649,9 +670,6 @@ impl Patcher<'_> {
         if self.settings.quality_of_life_settings.persist_blue_suit {
             patches.push("load_blue_suit");
         }
-
-        // TODO: make this conditional on setting:
-        // patches.push("split_speed");
 
         for patch_name in patches {
             let patch_path = patches_dir.join(patch_name.to_string() + ".ips");
@@ -1944,9 +1962,9 @@ impl Patcher<'_> {
 
     fn apply_credits(&mut self) -> Result<()> {
         // Write randomizer settings to credits tilemap
-        self.write_preset(224, self.settings.skill_assumption_settings.preset.clone())?;
-        self.write_preset(226, self.settings.item_progression_settings.preset.clone())?;
-        self.write_preset(228, self.settings.quality_of_life_settings.preset.clone())?;
+        self.write_preset(226, self.settings.skill_assumption_settings.preset.clone())?;
+        self.write_preset(228, self.settings.item_progression_settings.preset.clone())?;
+        self.write_preset(230, self.settings.quality_of_life_settings.preset.clone())?;
 
         // Write item locations in credits tilemap
         let item_name_pairs: Vec<(String, String)> = [
@@ -1972,6 +1990,8 @@ impl Patcher<'_> {
             ("Morph", "Morph Ball"),
             ("ReserveTank", "Reserve Tank"),
             ("WallJump", "WallJump Boots"),
+            ("SparkBooster", "Spark Booster"),
+            ("BlueBooster", "Blue Booster"),
         ]
         .into_iter()
         .map(|(x, y)| (x.to_string(), y.to_string()))
@@ -2059,6 +2079,8 @@ impl Patcher<'_> {
             (Item::SpeedBooster, 0x2000),
             (Item::Grapple, 0x4000),
             (Item::XRayScope, 0x8000),
+            (Item::SparkBooster, 0x0080),
+            (Item::BlueBooster, 0x0040),
         ]
         .into_iter()
         .collect();
@@ -2699,7 +2721,6 @@ impl Patcher<'_> {
         Ok(())
     }
 
-    #[allow(dead_code)]
     fn write_spark_booster_item_graphics(&mut self) -> Result<()> {
         let w = 0xc;
         let frame_1: [[u8; 16]; 16] = [
@@ -2739,7 +2760,7 @@ impl Patcher<'_> {
             [0, 7, 6, 7, 7, 7, 5, 4, 5, 7, 7, 7, 6, 7, 0, 0],
         ];
         let frames: [[[u8; 16]; 16]; 2] = [frame_1, frame_2];
-        let mut addr = snes2pc(0x899100);
+        let mut addr = snes2pc(0x899600);
         for f in &frames {
             for tile_y in 0..2 {
                 for tile_x in 0..2 {
@@ -2757,7 +2778,6 @@ impl Patcher<'_> {
         Ok(())
     }
 
-    #[allow(dead_code)]
     fn write_bluebooster_item_graphics(&mut self) -> Result<()> {
         let x = 0xc; // white for palette 0
         let w = 0xe; // white for palette 3
@@ -2798,7 +2818,7 @@ impl Patcher<'_> {
             [0, 7, 5, 7, 7, 7, 7, 4, 4, 7, 7, 7, 7, 5, 7, 0],
         ];
         let frames: [[[u8; 16]; 16]; 2] = [frame_1, frame_2];
-        let mut addr = snes2pc(0x899100);
+        let mut addr = snes2pc(0x899700);
         for f in &frames {
             for tile_y in 0..2 {
                 for tile_x in 0..2 {
@@ -2813,6 +2833,13 @@ impl Patcher<'_> {
                 }
             }
         }
+        Ok(())
+    }
+
+    fn write_custom_item_graphics(&mut self) -> Result<()> {
+        self.write_walljump_item_graphics()?;
+        self.write_spark_booster_item_graphics()?;
+        self.write_bluebooster_item_graphics()?;
         Ok(())
     }
 
@@ -3599,7 +3626,7 @@ pub fn make_rom(
     patcher.customize_escape_timer()?;
     patcher.apply_miscellaneous_patches()?;
     patcher.apply_mother_brain_fight_patches()?;
-    patcher.write_walljump_item_graphics()?;
+    patcher.write_custom_item_graphics()?;
     patcher.write_objective_data()?;
     patcher.apply_seed_identifiers()?;
     patcher.apply_credits()?;

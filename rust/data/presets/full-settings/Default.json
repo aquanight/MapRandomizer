@@ -4389,6 +4389,14 @@
                 "priority": "Default"
             },
             {
+                "item": "SparkBooster",
+                "priority": "Default"
+            },
+            {
+                "item": "BlueBooster",
+                "priority": "Default"
+            },
+            {
                 "item": "SpringBall",
                 "priority": "Default"
             },
@@ -4472,6 +4480,14 @@
             },
             {
                 "item": "SpeedBooster",
+                "priority": "No"
+            },
+            {
+                "item": "SparkBooster",
+                "priority": "No"
+            },
+            {
+                "item": "BlueBooster",
                 "priority": "No"
             },
             {
@@ -4651,6 +4667,7 @@
         "disable_spikesuit": false,
         "disable_bluesuit": false,
         "enable_major_glitches": false,
+        "speed_booster": "Vanilla",
         "ultra_low_qol": false,
         "race_mode": false,
         "random_seed": null

@@ -292,6 +292,7 @@ function buildSettingsObject() {
         "save_animals": formData.get("save_animals"),
         "other_settings": {
             "wall_jump": formData.get("wall_jump"),
+            "speed_booster": formData.get("split_speed"),
             "area_assignment": {
                 "preset": formData.get("area_assignment_preset"),
                 "base_order": formData.get("area_assignment_base_order"),
@@ -555,6 +556,7 @@ function applyFullSettingsPreset(preset) {
     applyRadioValue("disableSpikesuit", other.disable_spikesuit);
     applyRadioValue("disableBluesuit", other.disable_bluesuit);
     applyRadioValue("enableMajorGlitches", other.enable_major_glitches);
+    applyRadioValue("speedBooster", other.speed_booster);
     applyRadioValue("raceMode", other.race_mode);
     document.getElementById("randomSeed").value = other.random_seed;
 }
@@ -1139,6 +1141,7 @@ function checkOtherOptions() {
     }
     if (document.getElementById("wallJumpCollectible").checked ||
         document.getElementById("energyFreeShinesparksYes").checked ||
+        document.getElementById("speedBoosterSplit").checked ||
         !document.getElementById("areaAssignmentPresetStandard").checked ||
         document.getElementById("doorLocksSizeSmall").checked ||
         document.getElementById("mapStationRevealPartial").checked ||
@@ -1171,6 +1174,15 @@ function updateFormConflicts() {
         document.querySelectorAll(".itemIconWallJump ~ div>label").forEach(Set.prototype.add.bind(toAdd));
     }
     
+    if (document.getElementById("speedBoosterVanilla").checked) {
+        document.querySelectorAll(".itemIconSparkBooster ~ div>label").forEach(Set.prototype.add.bind(toAdd));
+        document.querySelectorAll(".itemIconBlueBooster ~ div>label").forEach(Set.prototype.add.bind(toAdd));
+    }
+
+    if (document.getElementById("speedBoosterSplit").checked) {
+        document.querySelectorAll(".itemIconSpeedBooster ~ div>label").forEach(Set.prototype.add.bind(toAdd));
+    }
+
     if (parseInt(document.getElementById("itemPoolMissile").value) < 1) {
         document.querySelectorAll("#itemPriorities .itemIconMissile ~ div>label").forEach(Set.prototype.add.bind(toAdd));
     }
