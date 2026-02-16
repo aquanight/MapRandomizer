@@ -16,7 +16,7 @@ use crate::{
         vanilla_music::override_music,
     },
     patch::map_tiles::diagonal_flip_tile,
-    randomize::{LockedDoor, Randomization},
+    randomize::{LockedDoor, Randomization, get_starting_items},
     settings::{
         AreaAssignmentPreset, ETankRefill, Fanfares, ItemCount, MotherBrainFight, Objective,
         ObjectiveScreen, RandomizerSettings, SaveAnimals, SpeedBooster, StartLocationMode,
@@ -221,6 +221,7 @@ pub struct Patcher<'a> {
     pub settings: &'a RandomizerSettings,
     pub customize_settings: &'a CustomizeSettings,
     pub randomization: &'a Randomization,
+    pub starting_items: &'a [ItemCount],
     pub game_data: &'a GameData,
     pub map: &'a Map,
     pub other_door_ptr_pair_map: HashMap<DoorPtrPair, DoorPtrPair>,
@@ -677,10 +678,14 @@ impl Patcher<'_> {
         }
 
         // Write settings flags, e.g. for use by auto-tracking tools:
-        // For now this is just to indicate if walljump-boots exists as an item.
+        // For now this is just to indicate if walljump-boots exists as an item,
+        // and if Speed Booster is split into Blue Booster and Spark Booster.
         let mut settings_flag = 0x0000;
         if self.settings.other_settings.wall_jump == WallJump::Collectible {
             settings_flag |= 0x0001;
+        }
+        if self.settings.other_settings.speed_booster == SpeedBooster::Split {
+            settings_flag |= 0x0002;
         }
         self.rom.write_u16(snes2pc(0xdfff05), settings_flag)?;
 
@@ -2094,129 +2099,7 @@ impl Patcher<'_> {
         .into_iter()
         .collect();
 
-        let starting_items =
-            if self.settings.start_location_settings.mode == StartLocationMode::Escape {
-                vec![
-                    ItemCount {
-                        item: Item::ETank,
-                        count: 14,
-                    },
-                    ItemCount {
-                        item: Item::Missile,
-                        count: 46,
-                    },
-                    ItemCount {
-                        item: Item::Super,
-                        count: 10,
-                    },
-                    ItemCount {
-                        item: Item::PowerBomb,
-                        count: 10,
-                    },
-                    ItemCount {
-                        item: Item::Bombs,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Charge,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Ice,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::HiJump,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::SpeedBooster,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::BlueBooster,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::SparkBooster,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Wave,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Spazer,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::SpringBall,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Varia,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Gravity,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::XRayScope,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Plasma,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Grapple,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::SpaceJump,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::ScrewAttack,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::Morph,
-                        count: 1,
-                    },
-                    ItemCount {
-                        item: Item::ReserveTank,
-                        count: 4,
-                    },
-                    ItemCount {
-                        item: Item::WallJump,
-                        count: 1,
-                    },
-                ]
-                .into_iter()
-                .collect()
-            } else {
-                self.settings
-                    .item_progression_settings
-                    .starting_items
-                    .clone()
-            };
-
-        for x in &starting_items {
-            // Skip WJB without CWJ
-            if x.item == Item::WallJump
-                && self.settings.other_settings.wall_jump == WallJump::Vanilla
-            {
-                continue;
-            }
-            // Skip SpeedBooster / Split SpeedBooster if options dont match.
-            match (x.item, self.settings.other_settings.speed_booster) {
-                (Item::SpeedBooster, SpeedBooster::Split) => continue,
-                (Item::BlueBooster, SpeedBooster::Vanilla) => continue,
-                (Item::SparkBooster, SpeedBooster::Vanilla) => continue,
-                _ => {}
-            }
+        for x in self.starting_items {
             if x.count == 0 {
                 continue;
             }
@@ -3593,12 +3476,14 @@ pub fn make_rom(
     orig_rom.write_u8(snes2pc(0x83AA90), 0x1E)?; // Door cap X = 0x1E
 
     let mut rom = orig_rom.clone();
+    let starting_items = get_starting_items(randomizer_settings);
     let mut patcher = Patcher {
         orig_rom: &mut orig_rom,
         rom: &mut rom,
         settings: randomizer_settings,
         customize_settings,
         randomization,
+        starting_items: &starting_items,
         game_data,
         map: &randomization.map,
         other_door_ptr_pair_map: get_other_door_ptr_pair_map(&randomization.map),

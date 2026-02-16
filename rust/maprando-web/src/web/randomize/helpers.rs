@@ -7,11 +7,12 @@ use hashbrown::{HashMap, HashSet};
 use maprando::{
     helpers::get_item_priorities,
     preset::PresetData,
-    randomize::{DifficultyConfig, ItemPriorityGroup, Randomization},
+    randomize::{DifficultyConfig, ItemPriorityGroup, Randomization, get_starting_items},
     seed_repository::{Seed, SeedFile},
     settings::{
         AreaAssignmentBaseOrder, AreaAssignmentPreset, DoorLocksSize, ETankRefill,
-        FillerItemPriority, RandomizerSettings, SpeedBooster, WallJump, get_objective_groups,
+        FillerItemPriority, ItemCount, RandomizerSettings, SpeedBooster, WallJump,
+        get_objective_groups,
     },
     spoiler_log::SpoilerLog,
     spoiler_map,
@@ -66,6 +67,7 @@ pub struct SeedHeaderTemplate<'a> {
     preset_data: &'a PresetData,
     enabled_tech: HashSet<TechId>,
     enabled_notables: HashSet<(RoomId, NotableId)>,
+    starting_items: Vec<ItemCount>,
 }
 
 impl SeedHeaderTemplate<'_> {
@@ -461,6 +463,7 @@ pub fn render_seed(
         preset_data: &app_data.preset_data,
         enabled_tech,
         enabled_notables,
+        starting_items: get_starting_items(&seed_data.settings),
     };
     let seed_header_html = seed_header_template.render()?;
 

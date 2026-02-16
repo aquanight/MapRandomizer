@@ -33,7 +33,7 @@
 <div class="row">
     <div class="col-6 col-sm-5 col-md-4 col-lg-3">Starting items:</div>
     <div class="col-6 col-sm-7 col-md-8 col-lg-9">
-        {% if settings.item_progression_settings.starting_items.len() == 0 %}
+        {% if starting_items.len() == 0 %}
             None
         {% else %}
             {{+ self.starting_items_strs() }}

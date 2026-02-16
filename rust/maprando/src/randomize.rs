@@ -5,7 +5,7 @@ use crate::helpers::get_item_priorities;
 use crate::patch::NUM_AREAS;
 use crate::patch::map_tiles::get_objective_tiles;
 use crate::settings::{
-    AreaAssignmentBaseOrder, DoorsMode, FillerItemPriority, ItemPlacementStyle,
+    AreaAssignmentBaseOrder, DoorsMode, FillerItemPriority, ItemCount, ItemPlacementStyle,
     ItemPriorityStrength, KeyItemPriority, MotherBrainFight, Objective, ObjectiveSetting,
     ProgressionRate, RandomizerSettings, SaveAnimals, SkillAssumptionSettings, SpeedBooster,
     StartLocationMode, WallJump,
@@ -281,6 +281,7 @@ pub struct Randomizer<'a> {
     pub game_data: &'a GameData,
     pub settings: &'a RandomizerSettings,
     pub objectives: Vec<Objective>,
+    pub starting_items: Vec<ItemCount>,
     pub filler_priority_map: HashMap<Item, FillerItemPriority>,
     pub item_priority_groups: Vec<ItemPriorityGroup>,
     pub difficulty_tiers: &'a [DifficultyConfig],
@@ -354,7 +355,7 @@ pub struct RandomizationState {
 }
 
 // Info about an item used during ROM patching, to show info in the credits
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct EssentialItemSpoilerInfo {
     pub item: Item,
     pub step: Option<usize>,
@@ -3425,6 +3426,129 @@ pub fn get_objectives<R: Rng>(
     out
 }
 
+pub fn get_starting_items(settings: &RandomizerSettings) -> Vec<ItemCount> {
+    let starting_items = if settings.start_location_settings.mode == StartLocationMode::Escape {
+        vec![
+            ItemCount {
+                item: Item::ETank,
+                count: 14,
+            },
+            ItemCount {
+                item: Item::Missile,
+                count: 46,
+            },
+            ItemCount {
+                item: Item::Super,
+                count: 10,
+            },
+            ItemCount {
+                item: Item::PowerBomb,
+                count: 10,
+            },
+            ItemCount {
+                item: Item::Bombs,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Charge,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Ice,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::HiJump,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::SpeedBooster,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::BlueBooster,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::SparkBooster,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Wave,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Spazer,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::SpringBall,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Varia,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Gravity,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::XRayScope,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Plasma,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Grapple,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::SpaceJump,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::ScrewAttack,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::Morph,
+                count: 1,
+            },
+            ItemCount {
+                item: Item::ReserveTank,
+                count: 4,
+            },
+            ItemCount {
+                item: Item::WallJump,
+                count: 1,
+            },
+        ]
+        .into_iter()
+        .collect()
+    } else {
+        settings.item_progression_settings.starting_items.clone()
+    };
+
+    let mut out = vec![];
+    for x in &starting_items {
+        // If collectible wall jump is not enabled, do not place it as a starting item.
+        if x.item == Item::WallJump && settings.other_settings.wall_jump == WallJump::Vanilla {
+            continue;
+        }
+        // Depending on if Split Speed Booster is enabled, do not place inapplicable booster items.
+        match (x.item, settings.other_settings.speed_booster) {
+            (Item::BlueBooster | Item::SparkBooster, SpeedBooster::Vanilla) => continue,
+            (Item::SpeedBooster, SpeedBooster::Split) => continue,
+            _ => {}
+        }
+        out.push(x.clone());
+    }
+    out
+}
+
 impl<'r> Randomizer<'r> {
     pub fn new<R: Rng>(
         map: &'r Map,
@@ -3443,6 +3567,8 @@ impl<'r> Randomizer<'r> {
                 available_items += 1;
             }
         }
+
+        let starting_items = get_starting_items(settings);
 
         let preprocessor = Preprocessor::new(game_data, map, &difficulty_tiers[0]);
         let preprocessed_seed_links: Vec<Link> = preprocessor.get_all_door_links();
@@ -3472,7 +3598,7 @@ impl<'r> Randomizer<'r> {
         }
 
         let mut minimal_tank_count = get_minimal_tank_count(&difficulty_tiers[0]);
-        for x in &settings.item_progression_settings.starting_items {
+        for x in &starting_items {
             initial_items_remaining[x.item as usize] -=
                 usize::min(x.count, initial_items_remaining[x.item as usize]);
             if x.item == Item::ETank || x.item == Item::ReserveTank {
@@ -3562,6 +3688,7 @@ impl<'r> Randomizer<'r> {
             game_data,
             settings,
             objectives,
+            starting_items,
             filler_priority_map,
             item_priority_groups: get_item_priorities(
                 &settings.item_progression_settings.key_item_priority,
@@ -4517,14 +4644,8 @@ impl<'r> Randomizer<'r> {
         let mut items_set: HashSet<Item> = HashSet::new();
 
         // Include starting items first, as "step 0":
-        for x in &settings.item_progression_settings.starting_items {
+        for x in &self.starting_items {
             if x.count > 0 {
-                // Skip WallJump if it appears in the starting items without Collectible wall jump
-                if x.item == Item::WallJump
-                    && settings.other_settings.wall_jump == WallJump::Vanilla
-                {
-                    continue;
-                }
                 item_spoiler_info.push(EssentialItemSpoilerInfo {
                     item: x.item,
                     step: Some(0),
@@ -4533,6 +4654,7 @@ impl<'r> Randomizer<'r> {
                 items_set.insert(x.item);
             }
         }
+        println!("Starting items: {:?}", item_spoiler_info);
 
         // Include collectible items in the middle:
         for (step, step_summary) in spoiler_log.summary.iter().enumerate() {
@@ -5054,12 +5176,7 @@ impl<'r> Randomizer<'r> {
             doors_unlocked: vec![false; self.locked_door_data.locked_doors.len()],
             weapon_mask,
         };
-        for x in &self.settings.item_progression_settings.starting_items {
-            if x.item == Item::WallJump
-                && self.settings.other_settings.wall_jump == WallJump::Vanilla
-            {
-                continue;
-            }
+        for x in &self.starting_items {
             for _ in 0..x.count {
                 global.collect(
                     x.item,
